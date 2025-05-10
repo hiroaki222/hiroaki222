@@ -14,16 +14,16 @@ I'm passionate about exploring new technology stacks and actively dedicate mysel
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <img width="100%" src="https://github-readme-stats.vercel.app/api/top-langs?username=hiroaki222&show_icons=true&locale=en&layout=compact" alt="hiroaki222" />
+      <img width="100%" src="https://github-readme-stats.vercel.app/api/top-langs?username=hiroaki222&show_icons=true&locale=en&layout=compact&theme=dark" alt="hiroaki222" />
     </td>
     <td width="50%" valign="top">
-      <img width="100%" src="https://github-readme-stats.vercel.app/api?username=hiroaki222&show_icons=true&locale=en" alt="hiroaki222" />
-      <img width="100%" src="https://github-readme-streak-stats.herokuapp.com/?user=hiroaki222&" alt="hiroaki222" />
+      <img width="100%" src="https://github-readme-stats.vercel.app/api?username=hiroaki222&show_icons=true&locale=en&theme=dark" alt="hiroaki222" />
+      <img width="100%" src="https://github-readme-streak-stats.herokuapp.com/?user=hiroaki222&theme=dark" alt="hiroaki222" />
     </td>
   </tr>
   <tr>
     <td colspan="2" align="center">
-      <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=hiroaki222" alt="hiroaki222" /></a>
+      <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=hiroaki222&theme=onedark&column=9" alt="hiroaki222" /></a>
     </td>
   </tr>
 </table>
