@@ -7,9 +7,7 @@ I am studying web development, web and native applications, machine learning, an
 <h3 align="left">Languages and Tools:</h3>
 <!-- anaconda,apple,arduino,astro,aws,azure,bash,bun,c,cpp,cloudflare,css,docker,firebase,flutter,git,github,html,js,kotlin,latex,md,matlab,mongodb,mysql,nextjs,nginx,nodejs,npm,obsidian,pnpm,postgres,prisma,py,pytorch,raspberrypi,react,remix,sqlite,supabase,sklearn,selenium,tailwind,tauri,ts,ubuntu,vercel,vite,vscode,windows -->
 <p align="left">
-<a href="https://skillicons.dev"><img src="https://skillicons.dev/icons?i=anaconda,apple,arduino,astro,aws,azure,bash,bun,c,cpp,cloudflare,css,docker,firebase,flutter,git,github,html,js,kotlin,latex,md,matlab,mongodb,mysql,nextjs,nginx,nodejs,npm,obsidian" alt="My Skills"></a>
-<img src="https://avatars.githubusercontent.com/u/125163402?s=200&v=4" alt="orbstack" width="32" height="32" style="border-radius: 20%;">
-<a href="https://skillicons.dev"><img src="https://skillicons.dev/icons?i=,pnpm,postgres,prisma,py,pytorch,raspberrypi,react,remix,sqlite,supabase,sklearn,selenium,tailwind,tauri,ts,ubuntu,vercel,vite,vscode,windows" alt="My Skills"></a>
+<a href="https://skillicons.dev"><img src="https://skillicons.dev/icons?i=anaconda,apple,arduino,astro,aws,azure,bash,bun,c,cpp,cloudflare,css,docker,firebase,flutter,git,github,html,js,kotlin,latex,md,matlab,mongodb,mysql,nextjs,nginx,nodejs,npm,obsidian,pnpm,postgres,prisma,py,pytorch,raspberrypi,react,remix,sqlite,supabase,sklearn,selenium,tailwind,tauri,ts,ubuntu,vercel,vite,vscode,windows" alt="My Skills"></a>
 </p>
 
 <p><img align="left" src="https://github-readme-stats.vercel.app/api/top-langs?username=hiroaki222&show_icons=true&locale=en&layout=compact" alt="hiroaki222" /></p>
