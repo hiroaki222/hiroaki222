@@ -4,6 +4,8 @@ I am a graduate student.
 
 I am studying web development, web and native applications, machine learning, and so on.
 
+I'm passionate about exploring new technology stacks and actively dedicate myself to learning and applying them in practice.
+
 <h3 align="left">Languages and Tools:</h3>
 <table>
   <tr>
