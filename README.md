@@ -8,8 +8,8 @@ I'm passionate about exploring new technology stacks and actively dedicate mysel
 <table>
   <tr>
     <td colspan="2">
-    <!-- anaconda,apple,arduino,astro,aws,azure,bash,bun,c,cpp,cloudflare,css,docker,firebase,flutter,git,github,html,js,kotlin,latex,md,matlab,mongodb,mysql,nextjs,nginx,nodejs,npm,obsidian,pnpm,postgres,prisma,py,pytorch,raspberrypi,react,remix,sqlite,supabase,sklearn,selenium,tailwind,tauri,ts,ubuntu,vercel,vite,vscode,windows -->
-      <a href="https://skillicons.dev"><img src="https://skillicons.dev/icons?i=anaconda,apple,arduino,astro,aws,azure,bash,bun,c,cpp,cloudflare,css,docker,firebase,flutter,git,github,html,js,kotlin,latex,md,matlab,mongodb,mysql,nextjs,nginx,nodejs,npm,obsidian,pnpm,postgres,prisma,py,pytorch,raspberrypi,react,remix,sqlite,supabase,sklearn,selenium,tailwind,tauri,ts,ubuntu,vercel,vite,vscode,windows" alt="My Skills" /></a>
+    <!-- anaconda,apple,arduino,astro,aws,azure,bash,bun,c,cpp,cloudflare,css,docker,firebase,flutter,gcp,git,github,html,js,kotlin,latex,md,matlab,mongodb,mysql,nextjs,nginx,nodejs,npm,obsidian,pnpm,postgres,prisma,py,pytorch,raspberrypi,react,remix,sqlite,supabase,sklearn,selenium,tailwind,tauri,ts,ubuntu,vercel,vite,vscode,windows -->
+      <a href="https://skillicons.dev"><img src="https://skillicons.dev/icons?i=anaconda,apple,arduino,astro,aws,azure,bash,bun,c,cpp,cloudflare,css,docker,firebase,flutter,gcp,git,github,html,js,kotlin,latex,md,matlab,mongodb,mysql,nextjs,nginx,nodejs,npm,obsidian,pnpm,postgres,prisma,py,pytorch,raspberrypi,react,remix,sqlite,supabase,sklearn,selenium,tailwind,tauri,ts,ubuntu,vercel,vite,vscode,windows" alt="My Skills" /></a>
     </td>
   </tr>
   <tr>
