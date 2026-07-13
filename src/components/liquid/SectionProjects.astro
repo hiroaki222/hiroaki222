@@ -5,54 +5,144 @@ interface Props {
   projects: Project[]
 }
 const { projects } = Astro.props
+
+// profile.ts で既に year 降順 + 進行中優先でソート済みなので, その順のまま
+// year (先頭 4 桁数字) をキーにグループ化する. Map の insertion order で
+// 見出しも 2026 → 2025 → 2024 の順に並ぶ.
+const groups = new Map<string, Project[]>()
+for (const p of projects) {
+  const key = p.year.match(/^\d{4}/)?.[0] ?? p.year
+  const arr = groups.get(key) ?? []
+  arr.push(p)
+  groups.set(key, arr)
+}
 ---
 
 <section id="projects">
   <h2>Projects</h2>
-  <div class="glass-panel">
-    {projects.map((p) => (
-      <div class="row" id={`project-${p.slug}`}>
-        <div>
-          <div class:list={['title', p.todo && 'todo']}>{p.name}</div>
-          <div class:list={['desc', p.todo && 'todo']}>
-            <span class="i18n-ja" set:html={renderInline(p.description)} />
-            <span class="i18n-en" set:html={renderInline(p.descriptionEn ?? p.description)} />
-            {p.url && <> <a href={p.url} target="_blank" rel="noopener noreferrer">{p.url.replace(/^https?:\/\//, '')}</a></>}
+
+  {[...groups.entries()].map(([year, items]) => (
+    <div class="year-group">
+      <h3 class="year-h"><span>{year}</span><span class="rule" /></h3>
+      <div class="items">
+        {items.map((p) => (
+          <div class:list={['item', p.todo && 'todo']} data-c={p.category} id={`project-${p.slug}`}>
+            <div class="item-top">
+              <span class:list={['i-title', p.todo && 'todo']}>{p.name}</span>
+              <span class="cat-tag">{p.category}</span>
+            </div>
+            <p class:list={['i-desc', p.todo && 'todo']}>
+              <span class="i18n-ja" set:html={renderInline(p.description)} />
+              <span class="i18n-en" set:html={renderInline(p.descriptionEn ?? p.description)} />
+            </p>
+            {p.url && (
+              <a class="i-link" href={p.url} target="_blank" rel="noopener noreferrer">
+                {p.url.replace(/^https?:\/\//, '')} →
+              </a>
+            )}
           </div>
-        </div>
-        <div class:list={['date', p.todo && 'todo']}>{p.year}</div>
+        ))}
       </div>
-    ))}
-  </div>
+    </div>
+  ))}
 </section>
 
 <style>
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 2px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  /* category 色は Liquid tokens に無いので component scoped で macOS system colors 準拠 */
+  section {
+    --cat-product: #007aff;
+    --cat-rxp: #af52de;
+    --cat-oss: #34c759;
+    --cat-pub: #ff9500;
   }
   @media (prefers-color-scheme: dark) {
-    .glass-panel {
-      background: rgba(255, 255, 255, 0.05);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    section {
+      --cat-product: #0a84ff;
+      --cat-rxp: #bf5af2;
+      --cat-oss: #30d158;
+      --cat-pub: #ff9f0a;
     }
   }
-  .row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 12px;
-    padding: 10px 14px;
-    border-top: 1px solid var(--rule);
+
+  .year-group { margin-bottom: 22px; }
+  .year-group:last-child { margin-bottom: 0; }
+  .year-h {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    display: flex;
     align-items: baseline;
+    gap: 10px;
+    font-variant-numeric: tabular-nums;
   }
-  .row:first-child { border-top: none; }
-  .title { font-weight: 500; }
-  .desc { color: var(--muted); font-size: 12px; margin-top: 2px; grid-column: 1 / -1; }
-  .date { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
-  .todo { color: var(--muted); font-style: italic; font-size: 12px; }
+  .year-h .rule {
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .items {
+    display: grid;
+    gap: 14px;
+    padding-left: 14px;
+    border-left: 2px solid var(--rule);
+    margin-left: 4px;
+  }
+  .item {
+    position: relative;
+    /* scroll target のハイライト animate 用 */
+    border-radius: 6px;
+    padding: 2px 4px;
+    margin: -2px -4px;
+    scroll-margin-top: 20px;
+  }
+  .item::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c, var(--dim));
+    box-shadow: 0 0 0 3px var(--glass-bg);
+  }
+  .item[data-c="Product"] { --c: var(--cat-product); }
+  .item[data-c="Research × Product"] { --c: var(--cat-rxp); }
+  .item[data-c="OSS"] { --c: var(--cat-oss); }
+  .item[data-c="Publication"] { --c: var(--cat-pub); }
+
+  .item-top {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .i-title { font-size: 14px; font-weight: 600; }
+  .cat-tag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--c);
+    white-space: nowrap;
+  }
+  .i-desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin: 4px 0 0;
+  }
+  .i-link {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--link);
+    font-weight: 500;
+  }
+
+  /* todo item は既存挙動を継承 (色薄く + italic) */
+  .item.todo::before { background: var(--dim); }
+  .i-title.todo,
+  .i-desc.todo { color: var(--muted); font-style: italic; }
+  .i-desc.todo { font-size: 12px; }
 </style>
