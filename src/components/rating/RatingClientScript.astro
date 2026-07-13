@@ -1,0 +1,33 @@
+<script>
+  // 言語トグル (F1 TopNav と同方式): html[data-lang] 切替 + localStorage 永続化
+  document.querySelectorAll<HTMLButtonElement>('[data-set-lang]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.setLang!
+      document.documentElement.dataset.lang = lang
+      document.documentElement.lang = lang
+      localStorage.setItem('lang', lang)
+    })
+  })
+
+  // 自前ツールチップ: [data-tip-ja]/[data-tip-en] を hover で body 直下に表示.
+  // (FUT カードは clip-path で切り抜かれるため, CSS 疑似要素だと吹き出しが
+  // カード境界で切れる — fixed 配置の単一要素を共有して回避)
+  const tip = document.createElement('div')
+  tip.className = 'tip'
+  document.body.appendChild(tip)
+  document.querySelectorAll<HTMLElement>('[data-tip-ja]').forEach((el) => {
+    el.addEventListener('mouseenter', () => {
+      const lang = document.documentElement.dataset.lang === 'en' ? 'en' : 'ja'
+      tip.textContent = (lang === 'en' ? el.dataset.tipEn : el.dataset.tipJa) ?? ''
+      tip.style.opacity = '1'
+      const r = el.getBoundingClientRect()
+      const x = Math.max(8, Math.min(r.left + r.width / 2 - tip.offsetWidth / 2, innerWidth - tip.offsetWidth - 8))
+      const above = r.top - tip.offsetHeight - 9
+      tip.style.left = `${x}px`
+      tip.style.top = `${above >= 8 ? above : r.bottom + 9}px`
+    })
+    el.addEventListener('mouseleave', () => {
+      tip.style.opacity = '0'
+    })
+  })
+</script>

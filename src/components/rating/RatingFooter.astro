@@ -1,0 +1,25 @@
+---
+import type { Assessment } from '@/lib/profile'
+
+interface Props {
+  assessment: Assessment
+}
+const { assessment } = Astro.props
+---
+
+<footer>
+  <p>Design inspired by EA SPORTS FC™ player ratings. Not affiliated with Electronic Arts.</p>
+  <p>
+    <span class="i18n-ja">{assessment.methodJa ?? assessment.method}</span>
+    <span class="i18n-en">{assessment.method}</span>
+    {' '}· {assessment.date} ·
+    <a
+      href="https://github.com/hiroaki222/hiroaki222/blob/main/src/data/rating.md"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span class="i18n-ja">スコア根拠 (GitHub)</span>
+      <span class="i18n-en">Score rationale (GitHub)</span>
+    </a>
+  </p>
+</footer>

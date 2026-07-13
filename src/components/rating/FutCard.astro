@@ -1,0 +1,40 @@
+---
+import type { RatingAxis, Tip } from '@/components/rating/types'
+
+interface Props {
+  overall: number
+  mainPos: string
+  mainPosTip: Tip
+  nameEn: string
+  nameEnLast: string
+  nation: string
+  clubName: string
+  axes: RatingAxis[]
+}
+const { overall, mainPos, mainPosTip, nameEn, nameEnLast, nation, clubName, axes } = Astro.props
+---
+
+<div class="fut-card">
+  <div class="fut-head">
+    <div class="fut-ovr">
+      <div class="fut-ovr-num">{overall}</div>
+      <div class="fut-ovr-pos" data-tip-ja={mainPosTip.ja} data-tip-en={mainPosTip.en}>{mainPos}</div>
+    </div>
+    <div class="fut-photo-box">
+      <img class="fut-photo" src="/hero-photo.png" alt={nameEn} />
+    </div>
+  </div>
+  <div class="fut-name">{nameEnLast}</div>
+  <div class="fut-stats">
+    {axes.map((a) => (
+      <div class="fut-stat" data-tip-ja={a.label} data-tip-en={a.label}>
+        <div class="fut-stat-key">{a.key}</div>
+        <div class="fut-stat-val">{a.score}</div>
+      </div>
+    ))}
+  </div>
+  <div class="fut-meta">
+    <span class="flag" title={nation} aria-label={nation}></span>
+    <span class="fut-club">{clubName}</span>
+  </div>
+</div>

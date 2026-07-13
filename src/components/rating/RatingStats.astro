@@ -1,0 +1,33 @@
+---
+import type { RatingAxis } from '@/components/rating/types'
+
+interface Props {
+  axes: RatingAxis[]
+}
+const { axes } = Astro.props
+const tone = (score: number) => (score >= 72 ? 'hi' : 'lo')
+---
+
+<section class="stats-card">
+  <div class="stats-grid">
+    {axes.map((a) => (
+      <div class="cat">
+        <div class="cat-head">
+          <span class="cat-name">{a.label}</span>
+          <span class="cat-score">{a.score}</span>
+        </div>
+        {a.items.map((it) => (
+          <div class="attr" data-tip-ja={it.why} data-tip-en={it.whyEn ?? it.why}>
+            <div class="attr-row">
+              <span class="attr-name">{it.label}</span>
+              <span class="attr-score">{it.score}</span>
+            </div>
+            <div class="attr-bar">
+              <div class:list={['attr-fill', tone(it.score)]} style={`width: ${it.score}%`} />
+            </div>
+          </div>
+        ))}
+      </div>
+    ))}
+  </div>
+</section>

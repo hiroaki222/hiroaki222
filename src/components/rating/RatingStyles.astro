@@ -1,0 +1,329 @@
+<style is:global>
+  :root {
+    --bg: #0e0e0e;
+    --card: #1d1d1e;
+    --border: #2e2e2e;
+    --text: #fff;
+    --muted: #c9c9c9;
+    --dim: #8a8a8a;
+    --hi: #3fa45b;
+    --lo: #d9a441;
+    --bar-rest: #3a3a3a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans',
+      'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .top {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 20px 32px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .back { color: var(--muted); text-decoration: none; font-size: 13px; }
+  .back:hover { color: var(--text); }
+  .top-right { display: flex; align-items: center; gap: 16px; }
+  .top-season { color: var(--dim); font-size: 13px; }
+
+  /* ---- i18n: html[data-lang] で表示言語を切替 (F1 tokens.css と同方式) ---- */
+  html[data-lang='en'] .i18n-ja { display: none !important; }
+  html[data-lang='ja'] .i18n-en { display: none !important; }
+  .lang-toggle { display: flex; align-items: center; gap: 4px; }
+  .lang-toggle button {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 2px 4px;
+    color: var(--dim);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .lang-toggle button:hover { color: var(--muted); }
+  html[data-lang='ja'] .lang-toggle button[data-set-lang='ja'],
+  html[data-lang='en'] .lang-toggle button[data-set-lang='en'] {
+    color: var(--text);
+  }
+  .lang-sep { color: var(--dim); font-size: 12px; }
+
+  .layout {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 24px 32px 56px;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  /* ============ FUT card (金カード) ============ */
+  .fut-card {
+    width: 250px;
+    margin: 0 auto;
+    padding: 20px 20px 14px;
+    color: #2f2708;
+    /* 本家ゴールドカード: 明るいゴールド (上部ほど明るい).
+     * アスペクト比は本家準拠でおよそ 1 : 1.25 (幅 : 高さ). */
+    background:
+      radial-gradient(170px 130px at 50% 26%, #fbf0c4, transparent 78%),
+      linear-gradient(170deg, #f3df9a 0%, #e5c76f 55%, #d2ab50 100%);
+    clip-path: polygon(
+      5% 0, 95% 0, 100% 3%, 100% 78%,
+      90% 92%, 54% 100%, 46% 100%, 10% 92%, 0 78%, 0 3%
+    );
+  }
+  /* 写真をカード幅いっぱいに, OVR/POS は左上へオーバーレイ (本家レイアウト) */
+  .fut-head { position: relative; }
+  .fut-ovr { position: absolute; top: 2px; left: 0; text-align: center; z-index: 1; }
+  .fut-ovr-num { font-size: 40px; font-weight: 800; line-height: 1; }
+  .fut-ovr-pos { font-size: 15px; font-weight: 700; letter-spacing: 0.04em; }
+  /* 枠サイズは維持したまま中の顔をズーム (カードのアスペクト比を保つ) */
+  .fut-photo-box {
+    width: 215px;
+    height: 180px;
+    margin: 0 auto;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .fut-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transform: scale(1.5) translateY(-13%);
+    transform-origin: 50% 0;
+    mix-blend-mode: multiply;
+  }
+  .fut-name {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    margin-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(47, 39, 8, 0.35);
+  }
+  .fut-stats {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    margin-top: 6px;
+    text-align: center;
+  }
+  .fut-stat-key { font-size: 9.5px; font-weight: 700; letter-spacing: 0.02em; opacity: 0.75; }
+  .fut-stat-val { font-size: 16px; font-weight: 800; line-height: 1.1; }
+  .fut-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 7px;
+  }
+  /* 日の丸 (emoji 非依存) */
+  .flag {
+    width: 20px;
+    height: 14px;
+    background: #fff;
+    border-radius: 2px;
+    position: relative;
+    display: inline-block;
+  }
+  .flag::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #bc002d;
+  }
+  .fut-club { font-size: 12px; font-weight: 700; }
+
+  /* ============ profile panel ============ */
+  .panel {
+    margin-top: 22px;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 6px 20px;
+  }
+  .p-item { padding: 13px 0; border-bottom: 1px solid #2e2e2f; }
+  .p-item:last-child { border-bottom: none; }
+  .p-label { color: var(--dim); font-size: 12px; margin-bottom: 4px; }
+  .p-value { font-size: 14.5px; font-weight: 600; display: flex; gap: 6px; flex-wrap: wrap; }
+  .stars { letter-spacing: 0.14em; font-size: 13px; }
+
+  /* ---- 自前ツールチップ ---- */
+  [data-tip-ja] {
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .tip {
+    position: fixed;
+    z-index: 100;
+    max-width: 280px;
+    padding: 7px 12px;
+    background: #2c2c2d;
+    border: 1px solid #414142;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.45;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s;
+  }
+  .tag {
+    display: inline-block;
+    background: #2a2a2a;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* ============ name ============ */
+  .player-name { margin: 6px 0 26px; }
+  .player-name .first { font-size: 26px; font-weight: 700; line-height: 1.1; }
+  h1 {
+    margin: 0;
+    font-size: clamp(44px, 5.5vw, 64px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  /* ============ stats grid ============ */
+  .stats-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 30px 32px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px 40px;
+  }
+  .cat-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .cat-name { font-size: 16.5px; font-weight: 700; white-space: nowrap; }
+  .cat-score { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .attr { margin-bottom: 12px; border-radius: 6px; }
+  .attr[data-tip-ja]:hover .attr-name { color: var(--text); }
+  .attr-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .attr-name {
+    color: var(--muted);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .attr-score { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .attr-bar { height: 2px; background: var(--bar-rest); margin-top: 6px; }
+  .attr-fill { height: 100%; }
+  .attr-fill.hi { background: var(--hi); }
+  .attr-fill.lo { background: var(--lo); }
+
+  /* ============ playstyles ============ */
+  .ps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 22px;
+  }
+  .ps-card {
+    border-radius: 16px;
+    padding: 24px 26px;
+    background: var(--card);
+  }
+  .ps-head { display: flex; align-items: center; gap: 12px; }
+  /* 菱形バッジ (本家 PlayStyles アイコン風: 黒地・白枠・白シンボル) */
+  .ps-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  }
+  .ps-icon-core {
+    width: 32px;
+    height: 32px;
+    background: var(--card);
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ps-icon-core::after {
+    content: '';
+    width: 11px;
+    height: 11px;
+    background: #fff;
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  }
+  .ps-name { font-size: 16.5px; font-weight: 700; }
+  .ps-desc { color: var(--muted); font-size: 13.5px; margin-top: 10px; }
+
+  /* ページ全幅フッター: 左に評価注記, 右に EA disclaimer */
+  footer {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 20px 32px 28px;
+    border-top: 1px solid #232323;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    color: var(--dim);
+    font-size: 12px;
+  }
+  footer p { margin: 0; }
+  footer a { color: var(--muted); text-decoration: underline; }
+  footer a:hover { color: var(--text); }
+  @media (max-width: 760px) {
+    footer { flex-direction: column; gap: 6px; }
+  }
+
+  /* ============ responsive ============ */
+  @media (max-width: 1020px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .ps-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; gap: 28px; }
+    .panel { max-width: 340px; margin: 22px auto 0; }
+    .ps-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+import type { Rating } from '@/lib/profile'
+
+interface Props {
+  playstyles: Rating['playstyles']
+}
+const { playstyles } = Astro.props
+---
+
+<section class="ps-grid">
+  {playstyles.map((p) => (
+    <div class="ps-card">
+      <div class="ps-head">
+        <span class="ps-icon" aria-hidden="true"><span class="ps-icon-core"></span></span>
+        <span class="ps-name">{p.label}</span>
+      </div>
+      <div class="ps-desc">
+        <span class="i18n-ja">{p.ja}</span>
+        <span class="i18n-en">{p.en ?? p.ja}</span>
+      </div>
+    </div>
+  ))}
+</section>

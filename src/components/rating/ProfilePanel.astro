@@ -1,0 +1,68 @@
+---
+import type { Rating } from '@/lib/profile'
+import type { Tip } from '@/components/rating/types'
+
+interface Props {
+  rating: Rating
+  mainPos: string
+  mainPosTip: Tip
+  altPositions: string[]
+  altPositionTips: Tip[]
+  foot: string
+  birthDate?: string | null
+  age: number
+  nation: string
+  clubName: string
+}
+const { rating, mainPos, mainPosTip, altPositions, altPositionTips, foot, birthDate, age, nation, clubName } =
+  Astro.props
+---
+
+<div class="panel">
+  <div class="p-item">
+    <div class="p-label"><span class="i18n-ja">ポジション</span><span class="i18n-en">Position</span></div>
+    <div class="p-value"><span class="tag" data-tip-ja={mainPosTip.ja} data-tip-en={mainPosTip.en}>{mainPos}</span></div>
+  </div>
+  <div class="p-item">
+    <div class="p-label"><span class="i18n-ja">逆足</span><span class="i18n-en">Weak Foot</span></div>
+    <div class="p-value stars" data-tip-ja="ほんまに無理" data-tip-en="Honestly hopeless">
+      {'★'.repeat(rating.weakFoot)}{'☆'.repeat(5 - rating.weakFoot)}
+    </div>
+  </div>
+  <div class="p-item">
+    <div class="p-label"><span class="i18n-ja">スキルムーブ</span><span class="i18n-en">Skill Moves</span></div>
+    <div class="p-value stars" data-tip-ja="新技術キャッチアップの速さ" data-tip-en="Adopting new tech on release">
+      {'★'.repeat(rating.skillMoves)}{'☆'.repeat(5 - rating.skillMoves)}
+    </div>
+  </div>
+  <div class="p-item">
+    <div class="p-label"><span class="i18n-ja">利き足</span><span class="i18n-en">Preferred Foot</span></div>
+    <div class="p-value">
+      <span class="i18n-ja">{foot === 'Right' ? '右' : foot}</span>
+      <span class="i18n-en">{foot}</span>
+    </div>
+  </div>
+  <div class="p-item">
+    <div class="p-label"><span class="i18n-ja">生年月日</span><span class="i18n-en">Date of Birth</span></div>
+    <div class="p-value">{birthDate} ({age})</div>
+  </div>
+  <div class="p-item">
+    <div class="p-label"><span class="i18n-ja">国籍</span><span class="i18n-en">Nation</span></div>
+    <div class="p-value">
+      <span class="i18n-ja">{nation === 'Japan' ? '日本' : nation}</span>
+      <span class="i18n-en">{nation}</span>
+    </div>
+  </div>
+  <div class="p-item">
+    <div class="p-label"><span class="i18n-ja">クラブ</span><span class="i18n-en">Club</span></div>
+    <div class="p-value">{clubName}</div>
+  </div>
+  <div class="p-item">
+    <div class="p-label"><span class="i18n-ja">代替ポジション</span><span class="i18n-en">Alternative Positions</span></div>
+    <div class="p-value">
+      {altPositions.map((p, index) => (
+        <span class="tag" data-tip-ja={altPositionTips[index].ja} data-tip-en={altPositionTips[index].en}>{p}</span>
+      ))}
+    </div>
+  </div>
+</div>

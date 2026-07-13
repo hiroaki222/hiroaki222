@@ -1,0 +1,114 @@
+---
+// EAFC (EA Sports FC) 公式 web の選手レートページ準拠の詳細レーティング.
+// 構造: 左に FUT カード + プロフィールパネル / 右に名前 + スタッツグリッド +
+// PlayStyles カード. 数値は白, 色はアンダーラインバーのみ (本家準拠).
+// データは skills.md (assessment) と rating.md (subStats/playstyles).
+import { profile } from '@/lib/profile'
+import FutCard from '@/components/rating/FutCard.astro'
+import PlayStyles from '@/components/rating/PlayStyles.astro'
+import ProfilePanel from '@/components/rating/ProfilePanel.astro'
+import RatingClientScript from '@/components/rating/RatingClientScript.astro'
+import RatingFooter from '@/components/rating/RatingFooter.astro'
+import RatingHeader from '@/components/rating/RatingHeader.astro'
+import RatingStats from '@/components/rating/RatingStats.astro'
+import RatingStyles from '@/components/rating/RatingStyles.astro'
+
+const assessment = profile.assessment!
+const rating = profile.rating!
+
+const axes = assessment.axes.map((a) => ({
+  ...a,
+  items: rating.subStats.find((s) => s.key === a.key)?.items ?? [],
+}))
+
+// birthDate (DD/MM/YYYY) から build 時点の年齢を計算
+const [bd, bm, by] = (profile.birthDate ?? '1/1/2000').split('/').map(Number)
+const now = new Date()
+const age =
+  now.getFullYear() - by - (now.getMonth() + 1 < bm || (now.getMonth() + 1 === bm && now.getDate() < bd) ? 1 : 0)
+
+// ポジション略称の説明 (hover で自前ツールチップに表示, 日英)
+const POS_TIPS: Record<string, { ja: string; en: string }> = {
+  FS: { ja: 'Full-Stack — フロントエンドからインフラまで', en: 'Full-Stack — frontend to infrastructure' },
+  INF: { ja: 'Infrastructure — クラウド / インフラ', en: 'Infrastructure — cloud & IaC' },
+  MLR: { ja: 'ML / Research — 機械学習・研究', en: 'ML / Research' },
+  REF: { ja: 'Referee — JFA 公認審判員 4級 (実物)', en: 'Referee — JFA Class 4 (real licence)' },
+}
+const posTip = (p: string) => POS_TIPS[p] ?? { ja: p, en: p }
+
+const mainPos = rating.positions[0]
+const altPos = rating.positions.slice(1)
+const altPosTips = altPos.map(posTip)
+---
+
+<!doctype html>
+<html lang="ja" data-lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{profile.nameEn} — Player Ratings</title>
+    <meta name="description" content={`${profile.nameEn} — AI-assessed engineer ratings (OVR ${assessment.overall})`} />
+    <link rel="icon" type="image/png" href="/favicon-liquid.png" />
+    <meta property="og:title" content={`${profile.nameEn} — Player Ratings · OVR ${assessment.overall}`} />
+    <meta property="og:description" content={assessment.methodJa ?? assessment.method} />
+    <meta property="og:type" content="profile" />
+    <script is:inline>
+      // 言語初期化 (F1Layout と同方式): localStorage → ブラウザ言語. FOUC 防止で head 内.
+      const lang =
+        localStorage.getItem('lang') ||
+        ((navigator.language || '').toLowerCase().startsWith('ja') ? 'ja' : 'en')
+      document.documentElement.dataset.lang = lang
+      document.documentElement.lang = lang
+    </script>
+  </head>
+  <body>
+    <RatingHeader currentSeason={profile.currentSeason} />
+
+    <div class="layout">
+      <!-- ============ left: FUT card + profile panel ============ -->
+      <aside>
+        <FutCard
+          overall={assessment.overall}
+          mainPos={mainPos}
+          mainPosTip={posTip(mainPos)}
+          nameEn={profile.nameEn}
+          nameEnLast={profile.nameEnLast}
+          nation={profile.nation}
+          clubName={profile.club.name}
+          axes={axes}
+        />
+
+        <ProfilePanel
+          rating={rating}
+          mainPos={mainPos}
+          mainPosTip={posTip(mainPos)}
+          altPositions={altPos}
+          altPositionTips={altPosTips}
+          foot={profile.foot}
+          birthDate={profile.birthDate}
+          age={age}
+          nation={profile.nation}
+          clubName={profile.club.name}
+        />
+      </aside>
+
+      <!-- ============ right: name + stats + playstyles ============ -->
+      <main>
+        <div class="player-name">
+          <div class="first">{profile.nameEnFirst}</div>
+          <h1>{profile.nameEnLast}</h1>
+        </div>
+
+        <RatingStats axes={axes} />
+
+        <PlayStyles playstyles={rating.playstyles} />
+
+      </main>
+    </div>
+
+    <RatingFooter assessment={assessment} />
+    <RatingClientScript />
+
+    <RatingStyles />
+  </body>
+</html>
