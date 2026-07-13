@@ -12,33 +12,34 @@ const { projects, id = 'projects' } = Astro.props
   <div class="gallery-inner">
     <SectionHeader title="Projects" />
     <div class="articles">
-      {projects.map((p) => {
-        const Tag = (p.url ? 'a' : 'div') as 'a' | 'div'
-        return (
-          <Tag
-            class="article"
-            href={p.url ?? undefined}
-            target={p.url ? '_blank' : undefined}
-            rel={p.url ? 'noopener noreferrer' : undefined}
-          >
-            <div class="body">
-              <div class="meta">
-                <span class:list={['cat', p.todo && 'todo']}>{p.category}</span>
-                <span class:list={['time', p.todo && 'todo']}>{p.year}</span>
-              </div>
-              <h3 class:list={[p.todo && 'todo']}>{p.name}</h3>
-              <p class:list={['i18n-ja', p.todo && 'todo']}>{p.description}</p>
-              <p class:list={['i18n-en', p.todo && 'todo']}>{p.descriptionEn ?? p.description}</p>
+      {projects.map((p) => (
+        <div class="article">
+          <div class="body">
+            <div class="meta">
+              <span class:list={['cat', p.todo && 'todo']}>{p.category}</span>
+              <span class:list={['time', p.todo && 'todo']}>{p.year}</span>
+            </div>
+            <h3 class:list={[p.todo && 'todo']}>{p.name}</h3>
+            <p class:list={['i18n-ja', p.todo && 'todo']}>{p.description}</p>
+            <p class:list={['i18n-en', p.todo && 'todo']}>{p.descriptionEn ?? p.description}</p>
+            <div class="actions">
+              {p.deployUrl && (
+                <a class="more launch" href={p.deployUrl} target="_blank" rel="noopener noreferrer">
+                  Launch
+                </a>
+              )}
               {p.url ? (
                 // GitHub repo へ飛ぶものは View Repo, それ以外 (論文・詳細ページ等) は Read More
-                <span class="more">{p.url.includes('github.com') ? 'View Repo' : 'Read More'}</span>
-              ) : (
+                <a class="more" href={p.url} target="_blank" rel="noopener noreferrer">
+                  {p.url.includes('github.com') ? 'View Repo' : 'Read More'}
+                </a>
+              ) : !p.deployUrl && (
                 <span class="more locked">Private Repo</span>
               )}
             </div>
-          </Tag>
-        )
-      })}
+          </div>
+        </div>
+      ))}
     </div>
   </div>
 </section>
@@ -64,10 +65,7 @@ const { projects, id = 'projects' } = Astro.props
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    color: inherit;
-    text-decoration: none;
   }
-  .article:hover { text-decoration: none; }
   .meta {
     display: flex;
     align-items: center;
@@ -94,7 +92,13 @@ const { projects, id = 'projects' } = Astro.props
   }
   .body { padding: 16px 20px 20px; display: flex; flex-direction: column; flex: 1; }
   .body p:last-of-type { margin-bottom: 0; }
-  .body .more { margin-top: auto; padding-top: 12px; }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: auto;
+    padding-top: 12px;
+  }
   h3 {
     font-family: var(--font-display);
     font-size: 18px;
@@ -122,6 +126,9 @@ const { projects, id = 'projects' } = Astro.props
     gap: 4px;
   }
   .more::after { content: '→'; font-size: 14px; }
+  a.more:hover { text-decoration: none; opacity: 0.75; }
+  /* deployUrl 用: 動くアプリへの導線は View Repo と別色で明示 (team-accent) */
+  .more.launch { color: var(--team-accent); }
   /* url 無し (社内/private) の明示: リンク不可であることを色で伝える */
   .more.locked { color: var(--f1-muted); cursor: default; }
   .more.locked::after { content: none; }
