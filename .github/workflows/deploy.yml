@@ -67,6 +67,13 @@ jobs:
           SITE_THEME: ${{ matrix.theme }}
         run: bun run build:${{ matrix.theme }}
 
+      - name: Ensure Pages project exists
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bunx wrangler pages project create ${{ matrix.project }} --production-branch=main || echo "Project ${{ matrix.project }} already exists"
+
       - name: Deploy ${{ matrix.theme }} to ${{ matrix.domain }}
         if: steps.gate.outputs.skip != 'true'
         uses: cloudflare/wrangler-action@v3
