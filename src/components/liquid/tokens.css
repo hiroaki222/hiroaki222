@@ -1,0 +1,125 @@
+/* Liquid (hiroaki222.com) shared design tokens + desktop background.
+ * macOS 風 Liquid Glass window の外側 background もここで定義. */
+
+@import "tailwindcss";
+
+@theme {
+  --color-glass-bg: rgba(255, 255, 255, 0.35);
+  --color-glass-bg-strong: rgba(255, 255, 255, 0.55);
+  --color-glass-border: rgba(255, 255, 255, 0.6);
+  --color-glass-rim: rgba(255, 255, 255, 0.9);
+  --color-liquid-text: #1c1c1e;
+  --color-liquid-muted: #48484a;
+  --color-liquid-dim: #8e8e93;
+  --color-liquid-link: #007aff;
+  --color-liquid-accent: #007aff;
+  --color-liquid-rule: rgba(60, 60, 67, 0.15);
+  --color-sidebar-sel: rgba(0, 122, 255, 0.85);
+  --color-sidebar-hover: rgba(255, 255, 255, 0.35);
+  --color-chip: rgba(255, 255, 255, 0.4);
+  --color-tl-red: #ff5f57;
+  --color-tl-yellow: #febc2e;
+  --color-tl-green: #28c840;
+}
+
+:root {
+  --glass-bg: var(--color-glass-bg);
+  --glass-bg-strong: var(--color-glass-bg-strong);
+  --glass-border: var(--color-glass-border);
+  --glass-rim: var(--color-glass-rim);
+  --glass-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+  --text: var(--color-liquid-text);
+  --muted: var(--color-liquid-muted);
+  --dim: var(--color-liquid-dim);
+  --link: var(--color-liquid-link);
+  --accent: var(--color-liquid-accent);
+  --rule: var(--color-liquid-rule);
+  --sidebar-sel: var(--color-sidebar-sel);
+  --sidebar-hover: var(--color-sidebar-hover);
+  --chip: var(--color-chip);
+  --tl-red: var(--color-tl-red);
+  --tl-yellow: var(--color-tl-yellow);
+  --tl-green: var(--color-tl-green);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --glass-bg: rgba(28, 28, 30, 0.5);
+    --glass-bg-strong: rgba(44, 44, 46, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.14);
+    --glass-rim: rgba(255, 255, 255, 0.3);
+    --glass-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      0 8px 24px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+    --text: #f2f2f7;
+    --muted: #aeaeb2;
+    --dim: #636366;
+    --link: #0a84ff;
+    --accent: #0a84ff;
+    --rule: rgba(255, 255, 255, 0.1);
+    --sidebar-sel: rgba(10, 132, 255, 0.85);
+    --sidebar-hover: rgba(255, 255, 255, 0.08);
+    --chip: rgba(255, 255, 255, 0.08);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
+    'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic UI', 'Segoe UI', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  padding: 32px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 900px 700px at 15% 20%, rgba(255, 138, 88, 0.55), transparent 60%),
+    radial-gradient(ellipse 800px 800px at 85% 30%, rgba(88, 120, 255, 0.55), transparent 60%),
+    radial-gradient(ellipse 900px 700px at 50% 90%, rgba(255, 88, 180, 0.45), transparent 60%),
+    linear-gradient(180deg, #ffd6a5 0%, #a5b4fc 55%, #f0abfc 100%);
+  background-attachment: fixed;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background:
+      radial-gradient(ellipse 900px 700px at 15% 20%, rgba(120, 60, 180, 0.5), transparent 60%),
+      radial-gradient(ellipse 800px 800px at 85% 30%, rgba(20, 60, 140, 0.6), transparent 60%),
+      radial-gradient(ellipse 900px 700px at 50% 90%, rgba(180, 40, 120, 0.4), transparent 60%),
+      linear-gradient(180deg, #0d0d1a 0%, #1a1a2e 55%, #0d1a2e 100%);
+    background-attachment: fixed;
+  }
+}
+
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---- i18n: html[data-lang] で本文コンテンツの表示言語を切替 ----
+ * 両言語を DOM に出力しておき, TitleBar のトグル (localStorage 永続) で
+ * 片方を隠す (F1 tokens.css と同方式). */
+html[data-lang='en'] .i18n-ja { display: none !important; }
+html[data-lang='ja'] .i18n-en { display: none !important; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 4px; }
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); }
+}

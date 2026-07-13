@@ -1,0 +1,61 @@
+---
+// F1 側フッターの Profile 欄に相当する基本情報ブロック (liquid 版は末尾に置く).
+import type { Profile } from '@/lib/profile'
+interface Props {
+  profile: Profile
+}
+const { profile } = Astro.props
+
+const rows = [
+  { label: 'Name', value: `${profile.nameJa} (${profile.nameEn})` },
+  { label: 'Nation', value: profile.nation },
+  { label: 'Position', value: profile.roleShort },
+  { label: 'Base', value: profile.location },
+].filter((r) => r.value)
+---
+
+<section id="profile">
+  <h2>Profile</h2>
+  <div class="glass-panel">
+    {rows.map((r) => (
+      <div class="row">
+        <div class="label">{r.label}</div>
+        <div class="value">{r.value}</div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 2px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+  @media (prefers-color-scheme: dark) {
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 12px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  .row:first-child { border-top: none; }
+  .label {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .value { font-size: 13px; font-weight: 500; }
+</style>

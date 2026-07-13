@@ -1,0 +1,106 @@
+---
+interface Props {
+  title: string
+  subtitle?: string
+  iconSrc?: string
+}
+const { title, subtitle, iconSrc } = Astro.props
+---
+
+<div class="titlebar">
+  <div class="traffic" aria-hidden="true">
+    <span class="dot red"></span>
+    <span class="dot yellow"></span>
+    <span class="dot green"></span>
+  </div>
+  <div class="title">
+    {iconSrc && <img src={iconSrc} alt="" class="title-icon" />}
+    {title}
+    {subtitle && <small>— {subtitle}</small>}
+  </div>
+  <div class="toolbar">
+    <button data-set-lang="ja">JA</button>
+    <button data-set-lang="en">EN</button>
+  </div>
+</div>
+
+<script>
+  // 言語トグル: html[data-lang] を切替えて localStorage に永続化 (F1 TopNav と同方式)
+  document.querySelectorAll<HTMLButtonElement>('[data-set-lang]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.setLang!
+      document.documentElement.dataset.lang = lang
+      document.documentElement.lang = lang
+      localStorage.setItem('lang', lang)
+    })
+  })
+</script>
+
+<style>
+  .titlebar {
+    padding: 10px 14px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--rule);
+    user-select: none;
+    position: relative;
+  }
+  .traffic { display: flex; gap: 8px; }
+  .traffic .dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    display: block;
+    box-shadow: inset 0 -1px 1px rgba(0, 0, 0, 0.15), 0 0 0 0.5px rgba(0, 0, 0, 0.05);
+  }
+  .traffic .dot.red { background: var(--tl-red); }
+  .traffic .dot.yellow { background: var(--tl-yellow); }
+  .traffic .dot.green { background: var(--tl-green); }
+  .title {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .title small { color: var(--muted); font-weight: 400; margin-left: 4px; }
+  .title-icon {
+    width: 18px; height: 18px;
+    display: inline-block;
+    vertical-align: -4px;
+    margin-right: 6px;
+    border-radius: 4px;
+  }
+  .toolbar { display: flex; gap: 4px; min-width: 52px; justify-content: flex-end; }
+  .toolbar button {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 3px 7px;
+    border-radius: 6px;
+    color: var(--dim);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, color 0.15s;
+  }
+  .toolbar button:hover { background: rgba(255, 255, 255, 0.25); color: var(--text); }
+  @media (prefers-color-scheme: dark) {
+    .toolbar button:hover { background: rgba(255, 255, 255, 0.1); }
+  }
+  :global(html[data-lang='ja']) .toolbar button[data-set-lang='ja'],
+  :global(html[data-lang='en']) .toolbar button[data-set-lang='en'] {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.35);
+    border: 1px solid var(--glass-border);
+    padding: 2px 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(html[data-lang='ja']) .toolbar button[data-set-lang='ja'],
+    :global(html[data-lang='en']) .toolbar button[data-set-lang='en'] {
+      background: rgba(255, 255, 255, 0.12);
+    }
+  }
+</style>

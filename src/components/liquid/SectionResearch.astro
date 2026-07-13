@@ -1,0 +1,17 @@
+---
+import { renderInline } from '@/lib/profile'
+interface Props {
+  research: string
+  researchEn?: string
+}
+const { research, researchEn } = Astro.props
+
+// research は YAML ブロックスカラーの複数段落 — F1 (ResearchSection) と同じく分割する.
+const paras = (t: string) => t.split(/\n+/).map((s) => s.trim()).filter(Boolean)
+---
+
+<section id="research">
+  <h2>Research</h2>
+  {paras(research).map((p) => <p class="i18n-ja" set:html={renderInline(p)} />)}
+  {paras(researchEn ?? research).map((p) => <p class="i18n-en" set:html={renderInline(p)} />)}
+</section>

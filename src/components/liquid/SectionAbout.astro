@@ -1,0 +1,21 @@
+---
+import { renderInline } from '@/lib/profile'
+interface Props {
+  bio: string[]
+  bioEn?: string[]
+  // 最終段落 (もう一方のサイトへの誘導). レイアウト別のためデータを分けて受ける.
+  outro?: string
+  outroEn?: string
+}
+const { bio, bioEn = [], outro, outroEn } = Astro.props
+---
+
+<section id="about">
+  <h2>About</h2>
+  {bio.map((p) => <p class="i18n-ja" set:html={renderInline(p)} />)}
+  {outro && <p class="i18n-ja" set:html={renderInline(outro)} />}
+  {(bioEn.length ? bioEn : bio).map((p) => <p class="i18n-en" set:html={renderInline(p)} />)}
+  {outro && <p class="i18n-en" set:html={renderInline(outroEn ?? outro)} />}
+</section>
+
+<!-- section shell/h2 styling is provided globally via LiquidLayout scoped :global(section) -->

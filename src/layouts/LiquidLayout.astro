@@ -1,93 +1,77 @@
 ---
-import type { Profile } from '@/data/profile'
+import '@/components/liquid/tokens.css'
+import { profile } from '@/lib/profile'
+import TitleBar from '@/components/liquid/TitleBar.astro'
+import Sidebar from '@/components/liquid/Sidebar.astro'
+import ProfileHead from '@/components/liquid/ProfileHead.astro'
+import SectionAbout from '@/components/liquid/SectionAbout.astro'
+import SectionEducation from '@/components/liquid/SectionEducation.astro'
+import SectionWork from '@/components/liquid/SectionWork.astro'
+import SectionResearch from '@/components/liquid/SectionResearch.astro'
+import SectionSkills from '@/components/liquid/SectionSkills.astro'
+import SectionProjects from '@/components/liquid/SectionProjects.astro'
+import SectionProfile from '@/components/liquid/SectionProfile.astro'
 
-interface Props {
-  profile: Profile
-}
-
-const { profile } = Astro.props
-
-// Simple markdown-lite for [text](url) in bio paragraphs
-const renderInline = (text: string): string =>
-  text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
 ---
 
 <!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{profile.nameEn} — {profile.roleShort}</title>
-<meta name="description" content={`${profile.nameEn} (${profile.nameJa}) — ${profile.role}`} />
+<html lang="ja" data-lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // 言語初期化 (F1Layout と同方式): localStorage → ブラウザ言語. FOUC 防止で head 内.
+      const lang =
+        localStorage.getItem('lang') ||
+        ((navigator.language || '').toLowerCase().startsWith('ja') ? 'ja' : 'en')
+      document.documentElement.dataset.lang = lang
+      document.documentElement.lang = lang
+    </script>
+    <title>エンジニアポートフォリオ — hiroaki222.com</title>
+    <meta name="description" content={`${profile.nameEn} (${profile.nameJa}) — ${profile.role}`} />
+    <link rel="icon" type="image/png" href="/favicon-liquid.png" />
+    <link rel="apple-touch-icon" href="/favicon-liquid.png" />
+    <meta property="og:title" content="エンジニアポートフォリオ — hiroaki222.com" />
+    <meta property="og:description" content={`${profile.nameEn} (${profile.nameJa}) — ${profile.role}`} />
+    <meta property="og:image" content="/favicon-liquid.png" />
+    <meta property="og:type" content="profile" />
+    <meta name="twitter:card" content="summary" />
+  </head>
+  <body>
+    <div class="window">
+      <TitleBar title={profile.nameJa} subtitle="hiroaki222.com" iconSrc="/favicon-liquid.png" />
+      <div class="body grid grid-cols-[220px_1fr] min-h-0 max-[640px]:grid-cols-1">
+        <Sidebar projects={profile.projects} githubUrl={profile.contact.github} />
+        <main class="main overflow-y-auto scroll-smooth px-9 py-7 max-[640px]:px-5 max-[640px]:py-6">
+          <ProfileHead
+            nameJa={profile.nameJa}
+            nameEn={profile.nameEn}
+            role={profile.role}
+            githubUrl={profile.contact.github}
+            emailUser={profile.contact.emailUser}
+            emailDomain={profile.contact.emailDomain}
+          />
+          {/* エンジニアリング比重: bio → skills → projects を先頭に, 残りは後ろへ */}
+          <SectionAbout
+            bio={profile.bio}
+            bioEn={profile.bioEn}
+            outro={profile.bioOutro?.liquid}
+            outroEn={profile.bioOutro?.liquidEn}
+          />
+          <SectionSkills groups={profile.skills} assessment={profile.assessment} />
+          <SectionProjects projects={profile.projects} />
+          <SectionEducation entries={profile.education} />
+          <SectionWork entries={profile.work ?? []} internships={profile.internships} />
+          <SectionResearch research={profile.research} researchEn={profile.researchEn} />
+          <SectionProfile profile={profile} />
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
+
 <style>
-  :root {
-    --glass-bg: rgba(255, 255, 255, 0.35);
-    --glass-bg-strong: rgba(255, 255, 255, 0.55);
-    --glass-border: rgba(255, 255, 255, 0.6);
-    --glass-rim: rgba(255, 255, 255, 0.9);
-    --glass-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(255,255,255,0.2);
-    --text: #1c1c1e;
-    --muted: #48484a;
-    --dim: #8e8e93;
-    --link: #007aff;
-    --accent: #007aff;
-    --rule: rgba(60,60,67,0.15);
-    --sidebar-sel: rgba(0,122,255,0.85);
-    --sidebar-hover: rgba(255,255,255,0.35);
-    --chip: rgba(255,255,255,0.4);
-    --tl-red: #ff5f57;
-    --tl-yellow: #febc2e;
-    --tl-green: #28c840;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --glass-bg: rgba(28, 28, 30, 0.5);
-      --glass-bg-strong: rgba(44, 44, 46, 0.65);
-      --glass-border: rgba(255, 255, 255, 0.14);
-      --glass-rim: rgba(255, 255, 255, 0.3);
-      --glass-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.3);
-      --text: #f2f2f7;
-      --muted: #aeaeb2;
-      --dim: #636366;
-      --link: #0a84ff;
-      --accent: #0a84ff;
-      --rule: rgba(255,255,255,0.1);
-      --sidebar-sel: rgba(10,132,255,0.85);
-      --sidebar-hover: rgba(255,255,255,0.08);
-      --chip: rgba(255,255,255,0.08);
-    }
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; color: var(--text); min-height: 100vh; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Segoe UI", sans-serif;
-    font-size: 13px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    padding: 32px 16px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    background:
-      radial-gradient(ellipse 900px 700px at 15% 20%, rgba(255,138,88,0.55), transparent 60%),
-      radial-gradient(ellipse 800px 800px at 85% 30%, rgba(88,120,255,0.55), transparent 60%),
-      radial-gradient(ellipse 900px 700px at 50% 90%, rgba(255,88,180,0.45), transparent 60%),
-      linear-gradient(180deg, #ffd6a5 0%, #a5b4fc 55%, #f0abfc 100%);
-    background-attachment: fixed;
-  }
-  @media (prefers-color-scheme: dark) {
-    body {
-      background:
-        radial-gradient(ellipse 900px 700px at 15% 20%, rgba(120,60,180,0.5), transparent 60%),
-        radial-gradient(ellipse 800px 800px at 85% 30%, rgba(20,60,140,0.6), transparent 60%),
-        radial-gradient(ellipse 900px 700px at 50% 90%, rgba(180,40,120,0.4), transparent 60%),
-        linear-gradient(180deg, #0d0d1a 0%, #1a1a2e 55%, #0d1a2e 100%);
-      background-attachment: fixed;
-    }
-  }
-
-  .glass-filter { display: none; }
-
+  /* --------- Window frame (Liquid Glass) --------- */
   .window {
     width: 100%;
     max-width: 980px;
@@ -100,7 +84,10 @@ const renderInline = (text: string): string =>
     overflow: hidden;
     display: grid;
     grid-template-rows: auto 1fr;
-    min-height: min(720px, calc(100vh - 64px));
+    /* window の高さを viewport に固定してスクロールを .main 内に閉じ込める.
+     * (min-height だけだと window がコンテンツ分伸びて body スクロールになり,
+     * sidebar のアンカージャンプ / スクロールスパイが効かなくなる) */
+    height: calc(100vh - 64px);
     position: relative;
   }
   .window::before {
@@ -109,153 +96,30 @@ const renderInline = (text: string): string =>
     inset: 0;
     border-radius: 16px;
     padding: 1px;
-    background: linear-gradient(180deg, var(--glass-rim), transparent 40%, transparent 80%, rgba(255,255,255,0.2));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    background: linear-gradient(
+      180deg,
+      var(--glass-rim),
+      transparent 40%,
+      transparent 80%,
+      rgba(255, 255, 255, 0.2)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
   }
-  .titlebar {
-    padding: 10px 14px;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 12px;
+
+  /* --------- Body grid (sidebar + main) --------- */
+  /* --------- Section shell shared across child components --------- */
+  .main :global(section) {
+    padding: 18px 0;
     border-bottom: 1px solid var(--rule);
-    user-select: none;
-    position: relative;
+    scroll-margin-top: 20px;
   }
-  .traffic { display: flex; gap: 8px; }
-  .traffic .dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    display: block;
-    box-shadow: inset 0 -1px 1px rgba(0,0,0,0.15), 0 0 0 0.5px rgba(0,0,0,0.05);
-  }
-  .traffic .dot.red { background: var(--tl-red); }
-  .traffic .dot.yellow { background: var(--tl-yellow); }
-  .traffic .dot.green { background: var(--tl-green); }
-  .titlebar .title {
-    text-align: center;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: -0.01em;
-  }
-  .titlebar .title small { color: var(--muted); font-weight: 400; margin-left: 4px; }
-  .titlebar .toolbar { display: flex; gap: 6px; }
-  .titlebar .toolbar button {
-    appearance: none;
-    background: rgba(255,255,255,0.25);
-    border: 1px solid var(--glass-border);
-    color: var(--text);
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  .titlebar .toolbar button:hover { background: rgba(255,255,255,0.4); }
-  @media (prefers-color-scheme: dark) {
-    .titlebar .toolbar button { background: rgba(255,255,255,0.08); }
-    .titlebar .toolbar button:hover { background: rgba(255,255,255,0.15); }
-  }
-
-  .body {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    min-height: 0;
-  }
-  @media (max-width: 640px) { .body { grid-template-columns: 1fr; } .sidebar { display: none; } }
-  .sidebar {
-    padding: 12px 8px;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-right: 1px solid var(--rule);
-    overflow-y: auto;
-  }
-  @media (prefers-color-scheme: dark) { .sidebar { background: rgba(0,0,0,0.15); } }
-  .sidebar .group-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--muted);
-    padding: 10px 10px 4px;
-  }
-  .sidebar a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-radius: 8px;
-    color: var(--text);
-    text-decoration: none;
-    font-size: 13px;
-    margin-bottom: 2px;
-    transition: background 0.15s;
-  }
-  .sidebar a:hover { background: var(--sidebar-hover); }
-  .sidebar a.active {
-    background: var(--sidebar-sel);
-    color: white;
-    box-shadow: 0 2px 8px rgba(0,122,255,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
-  }
-  .sidebar a .icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; color: var(--muted); flex-shrink: 0; }
-  .sidebar a.active .icon { color: white; }
-  .sidebar a .icon svg { width: 15px; height: 15px; }
-
-  .main {
-    padding: 28px 36px;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-  }
-  @media (max-width: 640px) { .main { padding: 24px 20px; } }
-
-  .profile-head {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--rule);
-    margin-bottom: 24px;
-  }
-  .profile-head .avatar {
-    width: 72px; height: 72px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(0,122,255,0.9), rgba(88,86,214,0.9));
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-size: 28px; font-weight: 500;
-    flex-shrink: 0;
-    box-shadow: 0 4px 16px rgba(0,122,255,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
-    backdrop-filter: blur(20px);
-  }
-  .profile-head h1 { font-size: 22px; font-weight: 600; margin: 0 0 2px; letter-spacing: -0.02em; }
-  .profile-head .role { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
-  .profile-head .links { display: flex; gap: 6px; flex-wrap: wrap; }
-  .profile-head .links a {
-    padding: 4px 12px;
-    background: rgba(255,255,255,0.35);
-    color: var(--text);
-    border: 1px solid var(--glass-border);
-    border-radius: 999px;
-    font-size: 12px;
-    text-decoration: none;
-    font-weight: 500;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  .profile-head .links a:hover { background: rgba(255,255,255,0.55); }
-  @media (prefers-color-scheme: dark) {
-    .profile-head .links a { background: rgba(255,255,255,0.08); }
-    .profile-head .links a:hover { background: rgba(255,255,255,0.15); }
-  }
-
-  section { padding: 18px 0; border-bottom: 1px solid var(--rule); scroll-margin-top: 20px; }
-  section:last-child { border-bottom: none; }
-  section > h2 {
+  .main :global(section:last-child) { border-bottom: none; }
+  .main :global(section > h2) {
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
@@ -263,222 +127,12 @@ const renderInline = (text: string): string =>
     color: var(--muted);
     margin: 0 0 12px;
   }
-  section p { margin: 0 0 8px; font-size: 13px; }
-  a { color: var(--link); text-decoration: none; }
-  a:hover { text-decoration: underline; }
+  .main :global(section p) { margin: 0 0 8px; font-size: 13px; }
+  .main :global(section a) { color: var(--link); text-decoration: none; }
+  .main :global(section a:hover) { text-decoration: underline; }
 
-  .glass-panel {
-    background: rgba(255,255,255,0.3);
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 2px 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.5);
+  /* Sidebar hides on narrow width */
+  @media (max-width: 640px) {
+    .body :global(.sidebar) { display: none; }
   }
-  @media (prefers-color-scheme: dark) {
-    .glass-panel { background: rgba(255,255,255,0.05); box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1); }
-  }
-  .glass-panel .row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 12px;
-    padding: 10px 14px;
-    border-top: 1px solid var(--rule);
-    align-items: baseline;
-  }
-  .glass-panel .row:first-child { border-top: none; }
-  .glass-panel .row .title { font-weight: 500; }
-  .glass-panel .row .desc { color: var(--muted); font-size: 12px; margin-top: 2px; grid-column: 1 / -1; }
-  .glass-panel .row .date { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
-
-  .skills-grid { display: grid; grid-template-columns: 1fr; gap: 4px; }
-  .skill-row {
-    display: grid;
-    grid-template-columns: 110px 1fr;
-    align-items: center;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--rule);
-    gap: 12px;
-  }
-  .skill-row:last-child { border-bottom: none; }
-  .skill-row .k { color: var(--muted); font-size: 12px; }
-  .skill-row .chips { display: flex; flex-wrap: wrap; gap: 4px; }
-  .chip {
-    padding: 3px 10px;
-    background: var(--chip);
-    color: var(--text);
-    border-radius: 999px;
-    font-size: 12px;
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  .todo { color: var(--muted); font-style: italic; font-size: 12px; }
-
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
-  @media (prefers-color-scheme: dark) { ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); } }
 </style>
-</head>
-<body>
-<svg class="glass-filter" width="0" height="0">
-  <defs>
-    <filter id="liquid-edge" x="-10%" y="-10%" width="120%" height="120%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.03" numOctaves="2" seed="7" result="noise"/>
-      <feGaussianBlur in="SourceGraphic" stdDeviation="0" result="src"/>
-      <feDisplacementMap in="src" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-  </defs>
-</svg>
-
-<div class="window">
-  <div class="titlebar">
-    <div class="traffic" aria-hidden="true">
-      <span class="dot red"></span>
-      <span class="dot yellow"></span>
-      <span class="dot green"></span>
-    </div>
-    <div class="title">{profile.nameJa} <small>— h-takahara.com</small></div>
-    <div class="toolbar">
-      <button title="Share">↗ Share</button>
-    </div>
-  </div>
-  <div class="body">
-    <nav class="sidebar">
-      <div class="group-label">Profile</div>
-      <a href="#about" class="active">
-        <span class="icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zM2 14a6 6 0 0112 0H2z"/></svg></span>
-        About
-      </a>
-      <a href="#education">
-        <span class="icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2L1 6l7 4 7-4-7-4zm5 6.5v3L8 14 3 11.5v-3l5 2.86 5-2.86z"/></svg></span>
-        Education
-      </a>
-      <a href="#research">
-        <span class="icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 2a5 5 0 100 10 5 5 0 000-10zM1 7a6 6 0 1110.32 4.14l3.27 3.27-.71.71-3.27-3.27A6 6 0 011 7z"/></svg></span>
-        Research
-      </a>
-      <div class="group-label">Work</div>
-      <a href="#skills">
-        <span class="icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M10 4V2h4v4h-2v8h-2V6H8V4h2zM2 8h4v6H4v-4H2V8zm4-4V2H4v2H2v2h4V4z"/></svg></span>
-        Skills
-      </a>
-      <a href="#projects">
-        <span class="icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h5l1 2h6v9H2V3z"/></svg></span>
-        Projects
-      </a>
-      <div class="group-label">Contact</div>
-      <a href={profile.contact.github}>
-        <span class="icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></span>
-        GitHub
-      </a>
-      <a href={profile.contact.web}>
-        <span class="icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2h6l4 4v8H4V2zm5 0v4h4"/></svg></span>
-        Quill
-      </a>
-    </nav>
-
-    <main class="main">
-      <div class="profile-head">
-        <div class="avatar">{profile.nameJa.slice(2, 3)}</div>
-        <div>
-          <h1>{profile.nameJa} / {profile.nameEn}</h1>
-          <div class="role">{profile.role}</div>
-          <div class="links">
-            <a href={profile.contact.github}>GitHub</a>
-            <a href={profile.contact.web}>Quill</a>
-            {profile.contact.email
-              ? <a href={`mailto:${profile.contact.email}`}>Email</a>
-              : <a href="mailto:#" class="todo">[email TODO]</a>
-            }
-          </div>
-        </div>
-      </div>
-
-      <section id="about">
-        <h2>About</h2>
-        {profile.bio.map((p) => <p set:html={renderInline(p)} />)}
-      </section>
-
-      <section id="education">
-        <h2>Education</h2>
-        <div class="glass-panel">
-          {profile.education.map((e) => (
-            <div class="row">
-              <div>
-                <div class:list={['title', e.todo && 'todo']}>{e.institution}</div>
-                <div class:list={['desc', e.todo && 'todo']}>{e.program}{e.note ? ` · ${e.note}` : ''}</div>
-              </div>
-              <div class="date">{e.years}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="research">
-        <h2>Research</h2>
-        <p class="todo">{profile.research}</p>
-      </section>
-
-      <section id="skills">
-        <h2>Skills</h2>
-        <div class="skills-grid">
-          {profile.skills.map((g) => (
-            <div class="skill-row">
-              <span class="k">{g.label}</span>
-              <div class="chips">
-                {g.items.map((it) => <span class="chip">{it}</span>)}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="projects">
-        <h2>Projects</h2>
-        <div class="glass-panel">
-          {profile.projects.map((p) => (
-            <div class="row">
-              <div>
-                <div class:list={['title', p.todo && 'todo']}>{p.name}</div>
-                <div class:list={['desc', p.todo && 'todo']}>
-                  {p.description}
-                  {p.url && <> <a href={p.url}>{p.url.replace(/^https?:\/\//, '')}</a></>}
-                </div>
-              </div>
-              <div class:list={['date', p.todo && 'todo']}>{p.year}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </main>
-  </div>
-</div>
-
-<script>
-  const links = document.querySelectorAll('.sidebar a[href^="#"]')
-  const sections = [...links].map(a => document.getElementById(a.getAttribute('href')!.slice(1))).filter(Boolean) as HTMLElement[]
-  const main = document.querySelector('.main') as HTMLElement | null
-  if (main) {
-    function updateActive() {
-      let current = sections[0]?.id
-      const scrollTop = main!.scrollTop
-      for (const s of sections) {
-        if (s.offsetTop - 40 <= scrollTop) current = s.id
-      }
-      links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current))
-    }
-    main.addEventListener('scroll', updateActive, { passive: true })
-    links.forEach(a => a.addEventListener('click', (e) => {
-      const href = a.getAttribute('href')
-      if (href?.startsWith('#')) {
-        e.preventDefault()
-        const el = document.getElementById(href.slice(1))
-        if (el) main!.scrollTo({ top: el.offsetTop - 20, behavior: 'smooth' })
-      }
-    }))
-  }
-</script>
-</body>
-</html>

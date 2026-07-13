@@ -1,0 +1,245 @@
+---
+import type { Assessment, SkillGroup } from '@/lib/profile'
+interface Props {
+  groups: SkillGroup[]
+  assessment?: Assessment
+}
+const { groups, assessment } = Astro.props
+
+// バー色は /rating と同じ 2 段階 (72 以上 green / 未満 orange). 数値は白.
+const tone = (score: number) => (score >= 72 ? 'hi' : 'lo')
+---
+
+<section id="skills">
+  <h2>
+    Skills
+    {assessment && (
+      <span class="method-badge">
+        <span class="i18n-ja">{assessment.methodJa ?? assessment.method}</span>
+        <span class="i18n-en">{assessment.method}</span>
+        {' '}· {assessment.date}
+      </span>
+    )}
+  </h2>
+
+  {assessment && (
+    <a class="assessment" href="/rating">
+      <div class="ovr">
+        <div class="ovr-num">{assessment.overall}</div>
+        <div class="ovr-label">Overall</div>
+      </div>
+      <div class="axes">
+        {assessment.axes.map((a) => (
+          <div class="axis" data-tip-ja={a.noteJa ?? a.note} data-tip-en={a.note}>
+            <span class="axis-key">{a.key}</span>
+            <span class="axis-label">{a.label}</span>
+            <span class="axis-score">{a.score}</span>
+            <div class="bar">
+              <div class:list={['fill', tone(a.score)]} style={`width: ${a.score}%`} />
+            </div>
+          </div>
+        ))}
+      </div>
+      <span class="assessment-cta" aria-hidden="true">
+        <span class="i18n-ja">詳細レーティング →</span>
+        <span class="i18n-en">Full ratings →</span>
+      </span>
+    </a>
+  )}
+
+  <div class="skills-grid">
+    {groups.map((g) => (
+      <div class="skill-row">
+        <span class="k">{g.label}</span>
+        <div class="chips">
+          {g.items.map((it) => <span class="chip">{it}</span>)}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  // 自前ツールチップ (/rating と同実装): [data-tip-ja] を hover で body 直下に表示.
+  // JA/EN トグルに追従する.
+  const tip = document.createElement('div')
+  tip.className = 'tip'
+  document.body.appendChild(tip)
+  document.querySelectorAll<HTMLElement>('[data-tip-ja]').forEach((el) => {
+    el.addEventListener('mouseenter', () => {
+      const lang = document.documentElement.dataset.lang === 'en' ? 'en' : 'ja'
+      tip.textContent = (lang === 'en' ? el.dataset.tipEn : el.dataset.tipJa) ?? ''
+      tip.style.opacity = '1'
+      const r = el.getBoundingClientRect()
+      const x = Math.max(8, Math.min(r.left + r.width / 2 - tip.offsetWidth / 2, innerWidth - tip.offsetWidth - 8))
+      const above = r.top - tip.offsetHeight - 9
+      tip.style.left = `${x}px`
+      tip.style.top = `${above >= 8 ? above : r.bottom + 9}px`
+    })
+    el.addEventListener('mouseleave', () => {
+      tip.style.opacity = '0'
+    })
+  })
+</script>
+
+<style>
+  /* ---- agent assessment (EAFC 選手レート風) ----
+   * 背景は liquid のガラスパネル, バー色だけ /rating と同一. */
+  .assessment {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 24px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    align-items: center;
+    position: relative;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    text-decoration: none !important;
+    color: var(--text);
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  @media (prefers-color-scheme: dark) {
+    .assessment {
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+  }
+  .assessment:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+  .assessment-cta {
+    grid-column: 1 / -1;
+    justify-self: end;
+    font-size: 10.5px;
+    color: var(--dim);
+    margin-top: -2px;
+  }
+  .assessment:hover .assessment-cta { color: var(--link); }
+
+  /* ---- 自前ツールチップ (/rating と同スタイル) ---- */
+  :global([data-tip-ja]) {
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  :global(.tip) {
+    position: fixed;
+    z-index: 100;
+    max-width: 280px;
+    padding: 7px 12px;
+    background: rgba(44, 44, 45, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.45;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s;
+  }
+  .ovr { text-align: center; padding: 0 6px; }
+  /* color は LiquidLayout の :global(section a) の青に負けないよう明示する */
+  .ovr-num {
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .ovr-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .axes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 20px;
+  }
+  @media (max-width: 720px) {
+    .axes { grid-template-columns: 1fr; }
+  }
+  .axis {
+    display: grid;
+    grid-template-columns: 34px 1fr auto;
+    grid-template-rows: auto auto;
+    align-items: baseline;
+    column-gap: 8px;
+    row-gap: 3px;
+  }
+  .axis-key {
+    font-family: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--dim);
+    letter-spacing: 0.04em;
+  }
+  .axis-label { font-size: 12px; color: var(--muted); }
+  .axis-score {
+    font-size: 14px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .bar {
+    grid-column: 1 / -1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--rule);
+    overflow: hidden;
+  }
+  .fill { height: 100%; border-radius: 2px; }
+  /* バー色は /rating と同一 (72 以上 green / 未満 orange) */
+  .fill.hi { background: #3fa45b; }
+  .fill.lo { background: #d9a441; }
+  /* h2 は LiquidLayout の uppercase スタイルを受けるので, badge 側で打ち消す */
+  .method-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 10px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--dim);
+    vertical-align: 1px;
+  }
+
+  /* ---- skill chips ---- */
+  .skills-grid { display: grid; grid-template-columns: 1fr; gap: 4px; }
+  .skill-row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--rule);
+    gap: 12px;
+  }
+  .skill-row:last-child { border-bottom: none; }
+  .k { color: var(--muted); font-size: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip {
+    padding: 3px 10px;
+    background: var(--chip);
+    color: var(--text);
+    border-radius: 999px;
+    font-size: 12px;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+</style>
