@@ -1,0 +1,88 @@
+name: Deploy portfolio
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - '.vscode/**'
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Build/deploy only one theme (leave blank for both)'
+        required: false
+        type: choice
+        options:
+          - ''
+          - f1
+          - liquid
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-${{ github.ref }}-${{ matrix.theme }}
+      cancel-in-progress: false
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - theme: f1
+            project: h-takahara
+            domain: h-takahara.com
+          - theme: liquid
+            project: hiroaki222
+            domain: hiroaki222.com
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Skip if input specifies other theme
+        id: gate
+        run: |
+          only='${{ github.event.inputs.only }}'
+          if [ -n "$only" ] && [ "$only" != "${{ matrix.theme }}" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Skipping ${{ matrix.theme }} (only=$only requested)"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.skip != 'true'
+
+      - uses: oven-sh/setup-bun@v2
+        if: steps.gate.outputs.skip != 'true'
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        if: steps.gate.outputs.skip != 'true'
+        run: bun install --frozen-lockfile
+
+      - name: Build ${{ matrix.theme }}
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          SITE_THEME: ${{ matrix.theme }}
+        run: bun run build:${{ matrix.theme }}
+
+      - name: Deploy ${{ matrix.theme }} to ${{ matrix.domain }}
+        if: steps.gate.outputs.skip != 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages deploy dist/${{ matrix.theme }}
+            --project-name=${{ matrix.project }}
+            --branch=main
+            --commit-hash=${{ github.sha }}
+
+      - name: Summary
+        if: steps.gate.outputs.skip != 'true'
+        run: |
+          echo "## Deployed ${{ matrix.theme }} → ${{ matrix.domain }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Project: \`${{ matrix.project }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Build dir: \`dist/${{ matrix.theme }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY

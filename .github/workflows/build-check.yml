@@ -1,0 +1,31 @@
+name: Build check
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - '.vscode/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        theme: [f1, liquid]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Build ${{ matrix.theme }}
+        env:
+          SITE_THEME: ${{ matrix.theme }}
+        run: bun run build:${{ matrix.theme }}
+      - name: Verify output
+        run: |
+          test -f dist/${{ matrix.theme }}/index.html
+          echo "Built ${{ matrix.theme }} successfully"
+          ls -lh dist/${{ matrix.theme }}/
