@@ -31,10 +31,14 @@ const rootNodes: Node[] = (
 ).sort((a, b) => byName(a.file, b.file))
 
 // デプロイ済みプロダクトへのリンク. src/data ツリーとは独立したセクションとして
-// sidebar 下部に列挙する (増えたらここに足す).
+// sidebar 下部に列挙する. projects の deployUrl は自動で追加される.
+const deployedProjects = projects
+  .filter((p): p is Project & { deployUrl: string } => Boolean(p.deployUrl))
+  .map((p) => ({ file: `${p.slug}.url`, href: p.deployUrl, external: true }))
 const products = [
   { file: 'h-takahara.url', href: 'https://h-takahara.com', external: true },
   { file: 'rating.url', href: '/rating', external: false },
+  ...deployedProjects,
 ].sort((a, b) => byName(a.file, b.file))
 
 const sortedProjects = [...projects].sort((a, b) => byName(a.slug, b.slug))

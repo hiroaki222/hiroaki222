@@ -79,6 +79,7 @@ export const projectSchema = z.object({
   description: z.string(),
   descriptionEn: z.string().optional(),
   url: nullableString,
+  deployUrl: optionalNullableString,
   category: z.string(),
   todo: z.boolean().optional(),
 })
