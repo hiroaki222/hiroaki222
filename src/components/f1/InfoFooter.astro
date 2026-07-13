@@ -1,0 +1,155 @@
+---
+import type { Profile } from '@/lib/profile'
+interface Props {
+  profile: Profile
+  id?: string
+}
+const { profile, id = 'contact' } = Astro.props
+const year = new Date().getFullYear()
+---
+
+<section class="info-footer" id={id}>
+  <div class="info-footer-inner">
+    <div>
+      <h3>Profile</h3>
+      <dl>
+        <dt>Name</dt><dd>{profile.nameJa} ({profile.nameEn})</dd>
+        <dt>Nation</dt>
+        <dd class="nation"><img src="/japan-circle.png" alt="" /> {profile.nation}</dd>
+        <dt>Position</dt><dd>{profile.roleShort}</dd>
+        <dt>Base</dt><dd>{profile.location}</dd>
+      </dl>
+    </div>
+    <div>
+      <h3>Affiliation</h3>
+      <dl>
+        <dt>Institute</dt><dd>{profile.club.name}</dd>
+        <dt>Since</dt><dd>{profile.club.since}</dd>
+        <dt>Class</dt><dd>{profile.club.class}</dd>
+        <dt>Lab</dt>
+        <dd class:list={[!profile.club.lab && 'todo']}>
+          <span class="i18n-ja">{profile.club.lab ?? '[研究室 TODO]'}</span>
+          <span class="i18n-en">{profile.club.labEn ?? profile.club.lab ?? '[Lab TODO]'}</span>
+        </dd>
+      </dl>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <dl>
+        <dt>GitHub</dt>
+        <dd>
+          <a href={profile.contact.github} target="_blank" rel="noopener noreferrer">
+            {profile.contact.github.replace(/^https?:\/\//, '')}
+          </a>
+        </dd>
+        <dt>Web</dt>
+        <dd>
+          <a href={profile.contact.web} target="_blank" rel="noopener noreferrer">
+            {profile.contact.webLabel}
+          </a>
+        </dd>
+        <dt>Email</dt>
+        <dd>
+          {profile.contact.emailUser ? (
+            <a
+              class="email"
+              data-u={profile.contact.emailUser}
+              data-d={profile.contact.emailDomain}
+              href="#contact"
+            >
+              Show email
+            </a>
+          ) : (
+            <span class="todo">[email TODO]</span>
+          )}
+        </dd>
+      </dl>
+    </div>
+  </div>
+  <div class="credit">
+    <p>
+      Design inspired by <a href="https://www.formula1.com" target="_blank" rel="noopener noreferrer">formula1.com</a>. Not affiliated with
+      Formula 1 or FOM.
+    </p>
+    <p>© {year} {profile.nameEn}. All rights reserved.</p>
+  </div>
+</section>
+
+<script>
+  // スパム対策: HTML 上にフルのアドレスを出力せず, クリックされて初めて
+  // data-u / data-d から組み立てて表示する (JS を実行する headless
+  // クローラも click までは踏まないため, 収集をほぼ遮断できる).
+  // 1回目の click で表示+mailto 化, 2回目以降は通常の mailto リンク.
+  document.querySelectorAll<HTMLAnchorElement>('a.email[data-u]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      if (a.dataset.revealed) return
+      e.preventDefault()
+      const addr = `${a.dataset.u}@${a.dataset.d}`
+      a.textContent = addr
+      a.href = `mailto:${addr}`
+      a.dataset.revealed = '1'
+    })
+  })
+</script>
+
+<style>
+  .info-footer {
+    background: var(--f1-dark-2);
+    color: white;
+    padding: 40px 48px 8px;
+    border-top: 1px solid var(--rule);
+  }
+  @media (max-width: 720px) {
+    .info-footer { padding: 32px 8px 8px; }
+    /* スマホは Contact だけ表示 (Profile / Affiliation は本文と重複) */
+    .info-footer-inner > div:not(:last-child) { display: none; }
+  }
+  .info-footer-inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px;
+  }
+  h3 {
+    font-family: var(--font-display);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--f1-red);
+    margin: 0 0 14px;
+    font-weight: 900;
+  }
+  dl { display: grid; grid-template-columns: 100px 1fr; gap: 8px 16px; margin: 0; font-size: 13px; }
+  dt {
+    color: var(--f1-grey-3);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-top: 3px;
+  }
+  dd { margin: 0; color: white; }
+  a { color: white; }
+  a:hover { color: var(--f1-red); }
+  .todo { color: var(--f1-muted); font-style: italic; font-size: 12px; }
+  .nation { display: flex; align-items: center; gap: 6px; }
+  .nation img { width: 14px; height: 14px; border-radius: 50%; }
+  .credit {
+    max-width: var(--container);
+    margin: 32px auto 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    color: var(--f1-grey-3);
+  }
+  .credit p { margin: 0; }
+  .credit a { color: var(--f1-grey-3); text-decoration: underline; }
+  .credit a:hover { color: white; }
+</style>

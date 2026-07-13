@@ -1,0 +1,83 @@
+---
+// hero 直上の tab bar (formula1.com の "Statistics Biography News" オマージュ).
+// News は該当 section が無いため Projects に置換.
+const tabs = [
+  { href: '#statistics', label: 'Statistics' },
+  { href: '#biography', label: 'Biography' },
+  { href: '#projects', label: 'Projects' },
+  { href: '#research', label: 'Research' },
+]
+---
+
+<div class="tabbar">
+  <div class="tabbar-inner">
+    <nav>
+      {tabs.map((t, i) => (
+        <a href={t.href} class:list={[i === 0 && 'active']}>{t.label}</a>
+      ))}
+    </nav>
+  </div>
+</div>
+
+<script>
+  // scroll 位置で active tab を切り替える (page 全体 scroll)
+  const tabLinks = document.querySelectorAll<HTMLAnchorElement>('.tabbar nav a')
+  const tabSections = [...tabLinks]
+    .map((a) => document.getElementById(a.getAttribute('href')!.slice(1)))
+    .filter((x): x is HTMLElement => x !== null)
+
+  const updateTabs = () => {
+    let current = tabSections[0]?.id
+    for (const s of tabSections) {
+      if (s.getBoundingClientRect().top <= 120) current = s.id
+    }
+    tabLinks.forEach((a) =>
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current),
+    )
+  }
+  window.addEventListener('scroll', updateTabs, { passive: true })
+
+  // タブバー自身の高さも CSS 変数で公開 (アンカー着地位置の補正に使う)
+  const tabbar = document.querySelector<HTMLElement>('.tabbar')
+  const setTabbarH = () =>
+    document.documentElement.style.setProperty('--tabbar-h', `${tabbar?.offsetHeight ?? 0}px`)
+  setTabbarH()
+  window.addEventListener('resize', setTabbarH, { passive: true })
+</script>
+
+<style>
+  .tabbar {
+    background: var(--f1-dark);
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    /* 固定ヘッダー (mainnav + race strip) の直下に吸着 */
+    top: var(--sticky-head-h, 0px);
+    z-index: 20;
+  }
+  .tabbar-inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 96px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 46px;
+  }
+  @media (max-width: 720px) {
+    .tabbar-inner { padding: 0 8px; }
+  }
+  nav { display: flex; gap: 24px; }
+  nav a {
+    color: var(--f1-muted);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 13px 0;
+    border-bottom: 2px solid transparent;
+  }
+  nav a:hover { color: var(--f1-text); text-decoration: none; }
+  nav a.active {
+    color: white;
+    font-weight: 700;
+  }
+</style>

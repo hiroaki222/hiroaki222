@@ -1,0 +1,125 @@
+---
+// 研究セクション: research.md のストーリー本文 + Publications の bib リスト.
+// Projects (プロダクト) とは独立したセクションとして表示する.
+import type { Project } from '@/lib/profile'
+import { renderInline } from '@/lib/profile'
+import SectionHeader from '@/components/f1/SectionHeader.astro'
+interface Props {
+  research: string
+  researchEn?: string
+  publications: Project[]
+}
+const { research, researchEn, publications } = Astro.props
+const paras = (t: string) => t.split(/\n+/).map((s) => s.trim()).filter(Boolean)
+---
+
+<section class="research-section" id="research">
+  <div class="research-inner">
+    <SectionHeader title="Research" />
+    <div class="prose">
+      {paras(research).map((p) => <p class="i18n-ja" set:html={renderInline(p)} />)}
+      {paras(researchEn ?? research).map((p) => <p class="i18n-en" set:html={renderInline(p)} />)}
+    </div>
+    {publications.length > 0 && (
+      <div class="pubs">
+        <h3 class="pubs-title">Publications</h3>
+        <div class="pub-rows">
+          {publications.map((p) => {
+            const Tag = (p.url ? 'a' : 'div') as 'a' | 'div'
+            return (
+              <Tag
+                class="pub-row"
+                href={p.url ?? undefined}
+                target={p.url ? '_blank' : undefined}
+                rel={p.url ? 'noopener noreferrer' : undefined}
+              >
+                <div class="pub-yr">{p.year}</div>
+                <div>
+                  <div class="pub-name">{p.name}</div>
+                  <p class="pub-desc i18n-ja">{p.description}</p>
+                  <p class="pub-desc i18n-en">{p.descriptionEn ?? p.description}</p>
+                </div>
+              </Tag>
+            )
+          })}
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .research-section {
+    background: var(--f1-dark);
+    padding: 0 48px 48px;
+  }
+  @media (max-width: 720px) {
+    .research-section { padding: 0 8px 40px; }
+  }
+  .research-inner { max-width: var(--container); margin: 0 auto; }
+  .prose p {
+    max-width: 800px;
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--f1-text);
+    margin: 0 0 18px;
+  }
+  .prose p :global(strong) { color: white; font-weight: 700; }
+  .prose p :global(a) { color: var(--link); }
+
+  .pubs { margin-top: 28px; }
+  .pubs-title {
+    margin: 0 0 12px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--f1-grey-3);
+  }
+  .pub-rows {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    background: var(--f1-dark-2);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .pub-row {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    gap: 20px;
+    align-items: baseline;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--rule);
+    color: inherit;
+    text-decoration: none;
+  }
+  .pub-row:last-child { border-bottom: none; }
+  .pub-row:hover { text-decoration: none; }
+  a.pub-row:hover .pub-name { color: var(--f1-red); }
+  @media (max-width: 640px) {
+    .pub-row { grid-template-columns: 1fr; gap: 6px; }
+  }
+  .pub-yr {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--f1-muted);
+    white-space: nowrap;
+  }
+  .pub-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+    line-height: 1.4;
+  }
+  .pub-desc {
+    color: var(--f1-muted);
+    font-size: 13px;
+    line-height: 1.55;
+    margin: 6px 0 0;
+    max-width: 760px;
+  }
+</style>

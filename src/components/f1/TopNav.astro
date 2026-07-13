@@ -1,0 +1,533 @@
+---
+// formula1.com の 3段 header 構成の再現:
+//  1) utility row (小リンク + pill buttons)
+//  2) main nav (logo + nav items + 全幅 1枚の斜めブロック装飾レイヤー)
+//  3) race strip (ラウンド情報 + 現地時刻 / MY TIME 時計)
+// URL は安定しているため hardcode.
+const nav = [
+  { href: '#statistics', label: 'Statistics' },
+  { href: '#biography', label: 'Biography' },
+  { href: '#career', label: 'Career' },
+  { href: '#projects', label: 'Projects' },
+  { href: '#contact', label: 'Contact' },
+]
+---
+
+<header class="site-head">
+  <div class="utility">
+    <div class="utility-inner">
+      <div class="u-right">
+        <div class="lang" role="group" aria-label="Language">
+          <button type="button" data-set-lang="ja" aria-label="日本語">JA</button>
+          <span class="lang-sep" aria-hidden="true">/</span>
+          <button type="button" data-set-lang="en" aria-label="English">EN</button>
+        </div>
+        <a href="https://hiroaki222.com" class="pill navy" target="_blank" rel="noopener noreferrer">Engineering</a>
+        <a href="https://github.com/hiroaki222" class="pill red" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mainnav">
+    <div class="mainnav-inner">
+      <div class="nav-deco" aria-hidden="true"></div>
+      <a href="/" class="logo" aria-label="Hiroaki Takahara">
+        <img src="/logo-f1-transparent.png" alt="HT" />
+      </a>
+      <nav>
+        {nav.map((it) => (
+          <a href={it.href}>{it.label}</a>
+        ))}
+      </nav>
+      <button
+        class="menu-btn"
+        type="button"
+        aria-label="Menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <nav class="mm-nav" aria-label="Mobile">
+      {nav.map((it) => (
+        <a href={it.href}>{it.label}</a>
+      ))}
+    </nav>
+  </div>
+
+  <div class="race-strip">
+    <div class="race-strip-inner">
+      <div class="rs-left">
+        <div class="rs-top"><span class="round">M2</span><span class="rs-sep">|</span><span class="dates">2025 – 27</span></div>
+        <a class="rs-gp" href="https://jaist.ac.jp/index.html" target="_blank" rel="noopener noreferrer"><img class="rs-flag" src="/japan-circle.png" alt="Japan" /> <b>Nomi</b> <span class="chev">›</span></a>
+      </div>
+      <div class="rs-right">
+        <div class="rs-clock">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="lbl">My time</span>
+          <b id="clock-local">--:--</b>
+        </div>
+        <div class="rs-clock sub">
+          <span class="lbl">JST</span>
+          <b id="clock-jst">--:--</b>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  const local = document.getElementById('clock-local')
+  const jst = document.getElementById('clock-jst')
+  const fmt = (tz?: string) =>
+    new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      ...(tz ? { timeZone: tz } : {}),
+    })
+  const localFmt = fmt()
+  const jstFmt = fmt('Asia/Tokyo')
+  const tick = () => {
+    const now = new Date()
+    if (local) local.textContent = localFmt.format(now)
+    if (jst) jst.textContent = jstFmt.format(now)
+  }
+  tick()
+  setInterval(tick, 10_000)
+
+  // 言語トグル: html[data-lang] を切替えて localStorage に永続化
+  document.querySelectorAll<HTMLButtonElement>('[data-set-lang]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.setLang!
+      document.documentElement.dataset.lang = lang
+      document.documentElement.lang = lang
+      localStorage.setItem('lang', lang)
+    })
+  })
+
+  // ヘッダー固定用の実測: utility 行の高さぶんだけ sticky top を負にして,
+  // スクロール時は mainnav + race strip だけが画面上部に残る.
+  // 残る高さは --sticky-head-h として公開し, Tabs バーの吸着位置に使う.
+  const utilityRow = document.querySelector<HTMLElement>('.site-head .utility')
+  const mainnavRow = document.querySelector<HTMLElement>('.site-head .mainnav')
+  const stripRow = document.querySelector<HTMLElement>('.site-head .race-strip')
+  const setHeadHeights = () => {
+    const u = utilityRow?.offsetHeight ?? 0
+    const rest = (mainnavRow?.offsetHeight ?? 0) + (stripRow?.offsetHeight ?? 0)
+    document.documentElement.style.setProperty('--utility-h', `${u}px`)
+    document.documentElement.style.setProperty('--sticky-head-h', `${rest}px`)
+  }
+  setHeadHeights()
+  window.addEventListener('resize', setHeadHeights, { passive: true })
+
+  // モバイル: ハンバーガー ⇄ 全画面メニュー. 開いてる間は背面スクロールを止める.
+  const menuBtn = document.querySelector<HTMLButtonElement>('.menu-btn')
+  const mobileMenu = document.querySelector<HTMLElement>('.mobile-menu')
+  const setMenu = (open: boolean) => {
+    if (!menuBtn || !mobileMenu) return
+    menuBtn.classList.toggle('open', open)
+    mobileMenu.classList.toggle('open', open)
+    menuBtn.setAttribute('aria-expanded', String(open))
+    document.documentElement.style.overflow = open ? 'hidden' : ''
+  }
+  menuBtn?.addEventListener('click', () => setMenu(!mobileMenu?.classList.contains('open')))
+  mobileMenu?.querySelectorAll('a').forEach((a) => {
+    a.addEventListener('click', () => setMenu(false))
+  })
+</script>
+
+<style>
+  .site-head {
+    background: var(--f1-dark);
+    /* utility 行の高さだけ上に食い込ませて sticky:
+     * スクロールすると utility は隠れ, mainnav + race strip が残る */
+    position: sticky;
+    top: calc(-1 * var(--utility-h, 43px));
+    z-index: 30;
+  }
+
+  /* ---- 1) utility row ---- */
+  .utility { border-bottom: 1px solid var(--rule); }
+  .utility-inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 8px 96px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-family: var(--font-ui);
+  }
+  /* pill 2つ (Engineering / GitHub) は密着させ, lang トグル側だけ間隔を取る */
+  .u-right { display: flex; align-items: center; gap: 0; }
+  .lang { display: flex; align-items: center; gap: 2px; margin-right: 22px; }
+  .lang button {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--f1-grey-3);
+    padding: 4px 5px;
+  }
+  .lang button:hover { color: white; }
+  :global(html[data-lang='ja']) .lang button[data-set-lang='ja'],
+  :global(html[data-lang='en']) .lang button[data-set-lang='en'] {
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--f1-red);
+    text-decoration-thickness: 2px;
+  }
+  .lang-sep { color: rgba(255, 255, 255, 0.25); font-size: 11px; }
+  .u-link {
+    color: var(--f1-text);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .u-link:hover { color: white; text-decoration: none; }
+  .pill {
+    padding: 5px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .pill.red { background: var(--f1-red); color: white; font-weight: 700; }
+  .pill.red:hover { background: #c00500; text-decoration: none; }
+  /* 黒 pill (f1.com の Sign In ポジション) */
+  .pill.navy {
+    background: #000;
+    color: white;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .pill.navy:hover { background: #1a1a24; text-decoration: none; }
+  .pill.navy { margin-right: 8px; }
+
+  /* ---- 2) main nav ---- */
+  .mainnav { border-bottom: 1px solid var(--rule); position: relative; }
+  .mainnav-inner {
+    position: relative;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 96px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  /* f1.com mainnav の再現: ページ背景をベースに, グレーの2本線 (//) が
+   * 一定リズムで斜め (130deg = 縦から 40° 前傾) に走る 1枚の装飾レイヤー.
+   * 組は 太 ([線48][間5][線48]) / 中 ([線24][間3][線24]) / 細 ([線12][間2][線12])
+   * の3種を「太 細 太 太 中 細 中」の順で配置 (周期 1475px).
+   * 先頭4組は組間 35px で左に固め, 残り3組は組間 170px で後半へ.
+   * 全体を 230px 右にシフト. */
+  .nav-deco {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    /* 縞パターンは変数に持ち, ::before (シャープ) / ::after (ブラー) で共用 */
+    --stripes: repeating-linear-gradient(
+      130deg,
+      transparent 0 230px,
+      rgba(255, 255, 255, 0.07) 230px 278px,
+      transparent 278px 283px,
+      rgba(255, 255, 255, 0.07) 283px 331px,
+      transparent 331px 366px,
+      rgba(255, 255, 255, 0.07) 366px 378px,
+      transparent 378px 380px,
+      rgba(255, 255, 255, 0.07) 380px 392px,
+      transparent 392px 427px,
+      rgba(255, 255, 255, 0.07) 427px 475px,
+      transparent 475px 480px,
+      rgba(255, 255, 255, 0.07) 480px 528px,
+      transparent 528px 563px,
+      rgba(255, 255, 255, 0.07) 563px 611px,
+      transparent 611px 616px,
+      rgba(255, 255, 255, 0.07) 616px 664px,
+      transparent 664px 834px,
+      rgba(255, 255, 255, 0.07) 834px 858px,
+      transparent 858px 861px,
+      rgba(255, 255, 255, 0.07) 861px 885px,
+      transparent 885px 1055px,
+      rgba(255, 255, 255, 0.07) 1055px 1067px,
+      transparent 1067px 1069px,
+      rgba(255, 255, 255, 0.07) 1069px 1081px,
+      transparent 1081px 1251px,
+      rgba(255, 255, 255, 0.07) 1251px 1275px,
+      transparent 1275px 1278px,
+      rgba(255, 255, 255, 0.07) 1278px 1302px,
+      transparent 1302px 1475px
+    );
+  }
+  /* 本家準拠: nav バーの斜線は下に向かって不透明度が落ちる
+   * (blur ではなく fade). mask の alpha で上 100% → 下 10% に減衰. */
+  .nav-deco::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--stripes);
+    mask-image: linear-gradient(180deg, black 15%, rgba(0, 0, 0, 0.1) 100%);
+    -webkit-mask-image: linear-gradient(180deg, black 15%, rgba(0, 0, 0, 0.1) 100%);
+  }
+  .mainnav-inner > :not(.nav-deco) { position: relative; }
+  /* logo PNG は上下 ~34% が透過余白のため, 固定高さ + overflow crop で
+   * 余白を切ってマーク実寸 ~28px を出す (f1.com のロゴ実寸に合わせる) */
+  .logo {
+    height: 28px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    margin-right: 28px;
+    flex-shrink: 0;
+  }
+  .logo img {
+    height: 88px;
+    width: auto;
+    display: block;
+  }
+  nav { display: flex; align-items: stretch; gap: 55px; }
+  nav a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    color: white;
+    font-family: var(--font-ui);
+    font-size: 19px;
+    font-weight: 700;
+    padding: 18px 20px;
+    letter-spacing: 0.02em;
+  }
+  nav a:hover { color: var(--f1-grey-3); text-decoration: none; }
+  @media (max-width: 1000px) {
+    .utility-inner, .race-strip-inner { padding-left: 24px; padding-right: 24px; }
+  }
+  /* ---- mobile: hamburger + 全画面メニュー ---- */
+  .menu-btn { display: none; }
+  .mobile-menu { display: none; }
+
+  @media (max-width: 720px) {
+    .utility-inner { padding: 8px 12px; }
+    .mainnav-inner { padding: 0 12px; justify-content: space-between; }
+    .mainnav-inner nav { display: none; }
+    .nav-deco { display: none; }
+
+    .menu-btn {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 44px;
+      height: 44px;
+      padding: 10px;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      /* 開いてる間も overlay (z:100) の上に残して閉じるボタンを兼ねる */
+      position: relative;
+      z-index: 101;
+    }
+    .menu-btn span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: white;
+      border-radius: 1px;
+      transition: transform 0.25s, opacity 0.2s;
+    }
+    .menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .menu-btn.open span:nth-child(2) { opacity: 0; }
+    .menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* 全画面メニュー. 背景は Biography の photo-wrap と同じ
+     * 「水平バンド × 位相ずらし斜線ストライプ」の再現 (A/B 2パターン + 貫通線). */
+    .mobile-menu {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background-color: var(--f1-dark);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      overflow-y: auto;
+      --mm-stripes: repeating-linear-gradient(
+        130deg,
+        transparent 0 60px,
+        rgba(255, 255, 255, 0.07) 60px 108px,
+        transparent 108px 114px,
+        rgba(255, 255, 255, 0.07) 114px 162px,
+        transparent 162px 420px,
+        rgba(255, 255, 255, 0.07) 420px 444px,
+        transparent 444px 450px,
+        rgba(255, 255, 255, 0.07) 450px 474px,
+        transparent 474px 650px,
+        rgba(255, 255, 255, 0.07) 650px 698px,
+        transparent 698px 800px,
+        rgba(255, 255, 255, 0.07) 800px 812px,
+        transparent 812px 900px
+      );
+      --mm-stripes-b: repeating-linear-gradient(
+        130deg,
+        transparent 0 230px,
+        rgba(255, 255, 255, 0.07) 230px 278px,
+        transparent 278px 284px,
+        rgba(255, 255, 255, 0.07) 284px 332px,
+        transparent 332px 520px,
+        rgba(255, 255, 255, 0.07) 520px 544px,
+        transparent 544px 560px,
+        rgba(255, 255, 255, 0.07) 560px 584px,
+        transparent 584px 720px,
+        rgba(255, 255, 255, 0.07) 720px 732px,
+        transparent 732px 840px,
+        rgba(255, 255, 255, 0.07) 840px 888px,
+        transparent 888px 900px
+      );
+      /* 貫通線 (バンドに関係なく全高を貫く疎な縞) */
+      background-image: repeating-linear-gradient(
+        130deg,
+        transparent 0 350px,
+        rgba(255, 255, 255, 0.07) 350px 398px,
+        transparent 398px 405px,
+        rgba(255, 255, 255, 0.07) 405px 417px,
+        transparent 417px 900px
+      );
+    }
+    .mobile-menu.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .mobile-menu::before,
+    .mobile-menu::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: var(--mm-stripes);
+      mask-repeat: no-repeat;
+      -webkit-mask-repeat: no-repeat;
+    }
+    .mobile-menu::before {
+      mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+      mask-size: 100% 30%, 100% 27%;
+      mask-position: 0 0%, 0 71.2%;
+      -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+      -webkit-mask-size: 100% 30%, 100% 27%;
+      -webkit-mask-position: 0 0%, 0 71.2%;
+    }
+    .mobile-menu::after {
+      background: var(--mm-stripes-b);
+      mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+      mask-size: 100% 22%, 100% 21%;
+      mask-position: 0 38.5%, 0 100%;
+      -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+      -webkit-mask-size: 100% 22%, 100% 21%;
+      -webkit-mask-position: 0 38.5%, 0 100%;
+    }
+    .mm-nav {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 130px 28px 40px;
+    }
+    .mm-nav a {
+      color: white;
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .mm-nav a:hover { color: var(--f1-grey-3); text-decoration: none; }
+  }
+
+  /* ---- 3) race strip ---- */
+  .race-strip { background: #000; }
+  .race-strip-inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 8px 96px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-ui);
+  }
+  .rs-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: white;
+    text-transform: uppercase;
+  }
+  .rs-gp {
+    font-size: 15px;
+    color: white;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .rs-gp:hover { text-decoration: none; }
+  .rs-gp:hover b { color: var(--f1-grey-3); }
+  .rs-gp b { font-weight: 700; }
+  .rs-flag {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: block;
+  }
+  .chev { color: var(--f1-grey-3); }
+  .rs-right { display: flex; gap: 24px; align-items: center; }
+  .rs-clock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .rs-clock .lbl {
+    color: var(--f1-grey-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    font-size: 10px;
+  }
+  .rs-clock b {
+    color: white;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--f1-red);
+    animation: pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @media (max-width: 720px) {
+    .race-strip-inner { padding: 8px 12px; }
+    /* "2025 – 27" や "My time" が2行に折れてぐちゃつくのを防ぐ */
+    .rs-top,
+    .rs-clock .lbl { white-space: nowrap; }
+    .rs-right { gap: 14px; }
+    .rs-gp { font-size: 14px; }
+  }
+  @keyframes pulse {
+    50% { opacity: 0.35; }
+  }
+</style>

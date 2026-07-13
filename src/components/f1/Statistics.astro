@@ -1,0 +1,207 @@
+---
+// formula1.com のドライバー Statistics ページ・オマージュ.
+// 左 = 今シーズンの basic facts (旧フッター Profile の内容),
+// 右 = Career Stats カード. 数値は profile データから build 時に自動集計.
+import type { Profile } from '@/lib/profile'
+import SectionHeader from '@/components/f1/SectionHeader.astro'
+interface Props {
+  profile: Profile
+}
+const { profile } = Astro.props
+
+const year = new Date().getFullYear()
+// 修士の学年 (M1/M2...) は入学年からの経過で算出
+const gradeN = Math.max(1, year - Number(profile.club.since) + 1)
+const clubs = (profile.work ?? []).length + profile.education.length
+const loans = (profile.internships ?? []).length
+const publications =
+  profile.careerCounts?.publications ??
+  profile.projects.filter((p) => p.category === 'Publication').length
+const works =
+  profile.careerCounts?.projects ??
+  profile.projects.length -
+    profile.projects.filter((p) => p.category === 'Publication').length
+const firstYear = Math.min(
+  ...[...(profile.work ?? []), ...profile.education].flatMap(
+    (e) => e.years.match(/\d{4}/g)?.map(Number) ?? [],
+  ),
+)
+const seasons = year - firstYear + 1
+
+type Stat = {
+  label: string
+  value?: string
+  ja?: string
+  en?: string
+  nation?: boolean
+  lines?: { ja: string; en?: string }[]
+}
+const seasonGroups: Stat[][] = [
+  [
+    { label: 'Grade', value: `M${gradeN}` },
+    { label: 'Affiliation', value: profile.club.name },
+  ],
+  [
+    { label: 'Name', ja: profile.nameJa, en: profile.nameEn },
+    { label: 'Nation', value: profile.nation, nation: true },
+    { label: 'Position', value: profile.roleShort },
+    { label: 'Base', value: profile.location },
+  ],
+  [{ label: 'Licence', lines: profile.licences ?? [] }],
+]
+const careerStats = [
+  { label: 'Affiliations', value: String(clubs) },
+  { label: 'Internships', value: String(loans) },
+  { label: 'Years Active', value: String(seasons) },
+  { label: 'Publications', value: String(publications) },
+  { label: 'Projects', value: String(works) },
+]
+---
+
+<section class="stats-section" id="statistics">
+  <div class="stats-inner">
+    <SectionHeader title="Statistics" separator={false} />
+    <div class="stats-cols">
+      <div class="season">
+        <h3 class="season-title">{profile.currentSeason} Season</h3>
+        {seasonGroups.map((g) => (
+          <div class="pair-group">
+            {g.map((s) => (
+              <div class:list={['stat', s.lines && 'stat-wide']}>
+                <span class="stat-label">{s.label}</span>
+                {s.lines ? (
+                  <span class="stat-value stat-lines">
+                    {s.lines.map((l) => (
+                      <span class="stat-line">
+                        <span class="i18n-ja">{l.ja}</span>
+                        <span class="i18n-en">{l.en ?? l.ja}</span>
+                      </span>
+                    ))}
+                  </span>
+                ) : (
+                  <span class="stat-value">
+                    {s.nation && <img class="flag" src="/japan-circle.png" alt="" />}
+                    {s.ja ? (
+                      <>
+                        <span class="i18n-ja">{s.ja}</span>
+                        <span class="i18n-en">{s.en ?? s.ja}</span>
+                      </>
+                    ) : (
+                      s.value
+                    )}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+      <aside class="career">
+        <h3 class="career-title">Career Stats</h3>
+        {careerStats.map((s) => (
+          <div class="career-row">
+            <span class="career-label">{s.label}</span>
+            <b class="career-value">{s.value}</b>
+          </div>
+        ))}
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .stats-section {
+    background: var(--f1-dark);
+    /* 上の余白は page-main のパディングに任せる */
+    padding: 0 48px;
+  }
+  @media (max-width: 720px) {
+    .stats-section { padding: 0 8px; }
+  }
+  .stats-inner { max-width: var(--container); margin: 0 auto; }
+  .stats-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px 64px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .stats-cols { grid-template-columns: 1fr; }
+  }
+
+  /* 左: 今シーズン */
+  .season-title,
+  .career-title {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 2.6vw, 34px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: white;
+    margin: 0 0 24px;
+  }
+  .pair-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 32px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .pair-group:last-child { border-bottom: none; }
+  @media (max-width: 640px) {
+    .pair-group { grid-template-columns: 1fr; }
+  }
+  .stat { display: flex; flex-direction: column; gap: 10px; }
+  .stat-label {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--f1-grey-3);
+  }
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 2vw, 26px);
+    font-weight: 900;
+    color: white;
+    line-height: 1.15;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .flag { width: 20px; height: 20px; border-radius: 50%; }
+  /* 複数ライセンスの横並び: ペアグリッドの全幅を使って1行に収める */
+  .stat-wide { grid-column: 1 / -1; }
+  .stat-lines { flex-wrap: wrap; gap: 8px 36px; font-size: clamp(18px, 1.8vw, 24px); }
+  .stat-line { display: block; white-space: nowrap; }
+
+  /* 右: Career Stats カード */
+  .career {
+    background: var(--f1-dark-2);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 32px 36px 8px;
+  }
+  .career-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .career-row:last-child { border-bottom: none; }
+  .career-label {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--f1-grey-3);
+  }
+  .career-value {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 2.2vw, 28px);
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+    white-space: nowrap;
+  }
+</style>

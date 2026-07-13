@@ -1,0 +1,286 @@
+---
+import { renderInline } from '@/lib/profile'
+import SectionHeader from '@/components/f1/SectionHeader.astro'
+interface Props {
+  bio: string[]
+  bioEn?: string[]
+  // 最終段落 (もう一方のサイトへの誘導). レイアウト別のためデータを分けて受ける.
+  outro?: string
+  outroEn?: string
+  quote: string
+  quoteEn?: string
+  quoteBy?: string
+  birthDate?: string | null
+  birthPlace?: string
+  photo?: string
+}
+const {
+  bio,
+  bioEn = [],
+  outro,
+  outroEn,
+  quote,
+  quoteEn,
+  quoteBy,
+  birthDate = null,
+  birthPlace,
+  photo,
+} = Astro.props
+---
+
+<section class="bio-section" id="biography">
+  <div class="bio-inner">
+    <SectionHeader title="Biography" />
+    <div class="facts">
+      <div class="fact">
+        <span class="fact-label">Date of Birth</span>
+        <span class:list={['fact-value', !birthDate && 'todo']}>{birthDate ?? '[TODO]'}</span>
+      </div>
+      {birthPlace && (
+        <div class="fact">
+          <span class="fact-label">Place of Birth</span>
+          <span class="fact-value">{birthPlace}</span>
+        </div>
+      )}
+    </div>
+    <div class:list={['bio-cols', photo && 'has-photo']}>
+      {photo && (
+        <div class="photo-wrap" aria-hidden="false">
+          <figure class="photo-card">
+            <img src={photo} alt="" loading="lazy" />
+          </figure>
+        </div>
+      )}
+      <div class="bio-text">
+        {bio.map((p) => <p class="i18n-ja" set:html={renderInline(p)} />)}
+        {outro && <p class="i18n-ja" set:html={renderInline(outro)} />}
+        {(bioEn.length ? bioEn : bio).map((p) => <p class="i18n-en" set:html={renderInline(p)} />)}
+        {outro && <p class="i18n-en" set:html={renderInline(outroEn ?? outro)} />}
+      </div>
+    </div>
+    <figure class="quote">
+      <span class="qmark" aria-hidden="true">””</span>
+      <blockquote>
+        <p class="i18n-ja">{quote}</p>
+        <p class="i18n-en">{quoteEn ?? quote}</p>
+      </blockquote>
+      {quoteBy && <figcaption>{quoteBy}</figcaption>}
+    </figure>
+  </div>
+</section>
+
+<style>
+  .bio-section {
+    background: var(--f1-dark);
+    padding: 48px 48px 0;
+  }
+  @media (max-width: 720px) {
+    .bio-section { padding: 40px 8px 0; }
+  }
+  /* f1.com 同様, section container は full 幅で本文だけ左寄せの読み幅に */
+  .bio-inner { max-width: var(--container); margin: 0 auto; }
+
+  /* 本家準拠: 見出し直下の Date of Birth / Place of Birth 2カラム */
+  .facts {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    gap: 300px;
+    margin: 0 0 36px;
+  }
+  /* 中間幅では 300px 固定だとはみ出すので詰める */
+  @media (max-width: 1100px) {
+    .facts { gap: 48px; }
+  }
+  @media (max-width: 640px) {
+    .facts { grid-template-columns: 1fr; gap: 20px; }
+  }
+  .fact { display: flex; flex-direction: column; gap: 10px; }
+  .fact-label {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--f1-grey-3);
+  }
+  .fact-value {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 2.4vw, 30px);
+    font-weight: 900;
+    color: white;
+    line-height: 1.1;
+  }
+  .fact-value.todo {
+    color: var(--f1-muted);
+    font-style: italic;
+    font-size: 16px;
+    font-family: var(--font-body);
+  }
+  p {
+    max-width: 800px;
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--f1-text);
+    margin: 0 0 18px;
+  }
+  p :global(strong) { color: white; font-weight: 700; }
+  p :global(a) { color: var(--link); }
+
+  /* 本家準拠: 左に写真カード (斜めストライプ装飾の海に白カード), 右に本文 */
+  .bio-cols.has-photo {
+    display: grid;
+    grid-template-columns: minmax(320px, 1fr) 1.2fr;
+    gap: 48px;
+    align-items: stretch;
+  }
+  @media (max-width: 900px) {
+    .bio-cols.has-photo { grid-template-columns: 1fr; }
+  }
+  .photo-wrap {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: clamp(28px, 5vw, 64px);
+  }
+  /* 本家の装飾: 斜線は「全幅の水平バンド」で切る (= 切り口は必ず水平).
+   * バンドを ::before / ::after の2枚に交互に割り当てて, ::after 側は
+   * 縞の位相 (background-position) をずらす → バンド境界で線が揃わず,
+   * 別々のセグメントとして見える. バンドは隙間なく積むから空白行も無し.
+   * 横方向の途切れは縞ベース自体の大きな空隙 (240-320, 346-430) が作る. */
+  /* 縞ベース: 周期 900px に 6本ずつ (太ペア / 中ペア / 太1 / 細1).
+   * A (::before 用) と B (::after 用) は独立パターンで, レーン (60-162,
+   * 230-332, 350-417=貫通線, 420-474, 520-584, 650-698, 720-732, 800-812,
+   * 840-888) を互いに重ならないよう手で割り付けてある. */
+  .photo-wrap {
+    --bio-stripes: repeating-linear-gradient(
+      130deg,
+      transparent 0 60px,
+      rgba(255, 255, 255, 0.07) 60px 108px,
+      transparent 108px 114px,
+      rgba(255, 255, 255, 0.07) 114px 162px,
+      transparent 162px 420px,
+      rgba(255, 255, 255, 0.07) 420px 444px,
+      transparent 444px 450px,
+      rgba(255, 255, 255, 0.07) 450px 474px,
+      transparent 474px 650px,
+      rgba(255, 255, 255, 0.07) 650px 698px,
+      transparent 698px 800px,
+      rgba(255, 255, 255, 0.07) 800px 812px,
+      transparent 812px 900px
+    );
+    --bio-stripes-b: repeating-linear-gradient(
+      130deg,
+      transparent 0 230px,
+      rgba(255, 255, 255, 0.07) 230px 278px,
+      transparent 278px 284px,
+      rgba(255, 255, 255, 0.07) 284px 332px,
+      transparent 332px 520px,
+      rgba(255, 255, 255, 0.07) 520px 544px,
+      transparent 544px 560px,
+      rgba(255, 255, 255, 0.07) 560px 584px,
+      transparent 584px 720px,
+      rgba(255, 255, 255, 0.07) 720px 732px,
+      transparent 732px 840px,
+      rgba(255, 255, 255, 0.07) 840px 888px,
+      transparent 888px 900px
+    );
+  }
+  /* 貫通線: バンドの切れ目に関係なく全高を貫く疎な縞 (太1 + 細1 / 周期900).
+   * レーン 350-417 は A / B どちらのパターンとも重ならない専用レーン. */
+  .photo-wrap {
+    background-image: repeating-linear-gradient(
+      130deg,
+      transparent 0 350px,
+      rgba(255, 255, 255, 0.07) 350px 398px,
+      transparent 398px 405px,
+      rgba(255, 255, 255, 0.07) 405px 417px,
+      transparent 417px 900px
+    );
+  }
+  .photo-wrap::before,
+  .photo-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: var(--bio-stripes);
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+  }
+  /* 切れ目は3本の水平ライン (y = 30 / 52 / 79%) で行単位に揃える.
+   * バンド構成 (高さは不揃い): 0-30 / 30-52 / 52-79 / 79-100 (%).
+   * 奇数バンド = ::before (パターンA), 偶数バンド = ::after (パターンB).
+   * 隣接バンドでパターンが違うから, 切れ目の行で線が一斉に途切れて見える. */
+  .photo-wrap::before {
+    mask-image:
+      linear-gradient(#000 0 0),
+      linear-gradient(#000 0 0);
+    mask-size: 100% 30%, 100% 27%;
+    mask-position: 0 0%, 0 71.2%;
+    -webkit-mask-image:
+      linear-gradient(#000 0 0),
+      linear-gradient(#000 0 0);
+    -webkit-mask-size: 100% 30%, 100% 27%;
+    -webkit-mask-position: 0 0%, 0 71.2%;
+  }
+  .photo-wrap::after {
+    background: var(--bio-stripes-b);
+    mask-image:
+      linear-gradient(#000 0 0),
+      linear-gradient(#000 0 0);
+    mask-size: 100% 22%, 100% 21%;
+    mask-position: 0 38.5%, 0 100%;
+    -webkit-mask-image:
+      linear-gradient(#000 0 0),
+      linear-gradient(#000 0 0);
+    -webkit-mask-size: 100% 22%, 100% 21%;
+    -webkit-mask-position: 0 38.5%, 0 100%;
+  }
+  .photo-card {
+    position: relative;
+    /* ::after の縞レイヤーは DOM 順で子要素より後に描かれるため,
+     * z-index で写真を縞より上に固定する (縞の透け防止) */
+    z-index: 1;
+    margin: 0;
+    max-width: 400px;
+    width: 100%;
+    height: fit-content;
+  }
+  .photo-card img {
+    display: block;
+    width: 100%;
+    border-radius: 8px;
+  }
+  .bio-text { min-width: 0; }
+  /* 本家準拠の pull quote: 赤クォートマーク + 巨大 display 文字 + 出典.
+   * block ごと画面中央に置き, 中のテキストは左揃えのまま. */
+  .quote {
+    max-width: 1000px;
+    margin: 64px auto 48px;
+  }
+  .qmark {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.6;
+    color: var(--f1-red);
+    margin-bottom: 24px;
+    user-select: none;
+  }
+  .quote blockquote { margin: 0; }
+  .quote blockquote p {
+    max-width: none;
+    font-family: var(--font-display);
+    font-size: clamp(30px, 3.8vw, 54px);
+    line-height: 1.18;
+    text-transform: uppercase;
+    color: white;
+    margin: 0;
+  }
+  .quote figcaption {
+    margin-top: 24px;
+    font-family: var(--font-ui);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--f1-grey-3);
+  }
+</style>

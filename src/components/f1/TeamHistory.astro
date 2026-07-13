@@ -1,0 +1,280 @@
+---
+import type { EducationEntry, LoanEntry } from '@/lib/profile'
+import SectionHeader from '@/components/f1/SectionHeader.astro'
+interface Props {
+  entries: EducationEntry[]
+  // インターン歴. 正史 (所属) と混ぜず, 本表の下に Loan Spells
+  // (期限付き移籍) 風の小さい別テーブルで出す.
+  loans?: LoanEntry[]
+}
+const { entries, loans = [] } = Astro.props
+
+const swatchFor = (institution: string, todo?: boolean): string => {
+  if (todo) return '?'
+  return institution.slice(0, 3).toUpperCase().replace(/[^A-Z]/g, '') || '?'
+}
+
+// 在籍年数 (seasons). 修了済みは end - start (卒業年は数えない),
+// 在学中 (年が1つだけ) は build 時点の年までの経過年数.
+const seasonsFor = (years: string): string => {
+  const nums = years.match(/\d{4}/g)?.map(Number) ?? []
+  if (nums.length === 0) return '–'
+  const [start, end] = nums
+  return String(end ? end - start : new Date().getFullYear() - start + 1)
+}
+---
+
+<section class="career-section" id="career">
+  <div class="career-inner">
+    <SectionHeader title="Career History" />
+    <div class="teams">
+      {entries.map((e) => (
+        <div class="team-row">
+          <div class="yr">
+            <span class="i18n-ja">{e.years}</span>
+            <span class="i18n-en">{e.yearsEn ?? e.years}</span>
+          </div>
+          <div
+            class:list={['swatch', e.todo && !e.swatchColor && 'grey', (e.swatch ?? '').length > 3 && 'long']}
+            style={e.swatchColor ? `background: ${e.swatchColor}` : undefined}
+          >
+            {e.swatch ?? swatchFor(e.institution, e.todo)}
+          </div>
+          <div>
+            <div class:list={['team-name', e.todo && 'todo']}>
+              <span class="i18n-ja">{e.institution}</span>
+              <span class="i18n-en">{e.institutionEn ?? e.institution}</span>
+            </div>
+            <div class:list={['team-role', e.todo && 'todo']}>
+              <span class="i18n-ja">{e.program}{e.note ? ` · ${e.note}` : ''}</span>
+              <span class="i18n-en">
+                {e.programEn ?? e.program}{(e.noteEn ?? e.note) ? ` · ${e.noteEn ?? e.note}` : ''}
+              </span>
+            </div>
+            {e.details && (
+              <>
+                <ul class="team-details i18n-ja">
+                  {e.details.map((d) => <li>{d}</li>)}
+                </ul>
+                <ul class="team-details i18n-en">
+                  {(e.detailsEn ?? e.details).map((d) => <li>{d}</li>)}
+                </ul>
+              </>
+            )}
+          </div>
+          <div class="apps">
+            <b>{seasonsFor(e.years)}</b>
+            <span>seasons</span>
+          </div>
+        </div>
+      ))}
+    </div>
+    {loans.length > 0 && (
+      <div class="loans">
+        <h3 class="loans-title">Loan Spells</h3>
+        <div class="loan-rows">
+          {loans.map((l) => (
+            <div class="loan-row">
+              <div class="loan-yr">
+                <span class="i18n-ja">{l.years}</span>
+                <span class="i18n-en">{l.yearsEn ?? l.years}</span>
+              </div>
+              <div class="loan-name">
+                <span class="i18n-ja">{l.institution}</span>
+                <span class="i18n-en">{l.institutionEn ?? l.institution}</span>
+              </div>
+              <div class="loan-tag">Internship</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .career-section {
+    background: var(--f1-dark);
+    padding: 48px 48px 0;
+  }
+  @media (max-width: 720px) {
+    .career-section { padding: 40px 8px 0; }
+  }
+  .career-inner { max-width: var(--container); margin: 0 auto; }
+  /* 年カラムは全行共通幅 (最長の年号) に揃える: 親 grid + subgrid */
+  .teams {
+    display: grid;
+    grid-template-columns: minmax(120px, max-content) 60px 1fr auto;
+    background: var(--f1-dark-2);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .team-row {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    gap: 20px;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .team-row:last-child { border-bottom: none; }
+  /* スマホ: 上段 [swatch | 年 | seasons], 下段 [名前・役職 全幅] に組み替え */
+  @media (max-width: 640px) {
+    .teams { grid-template-columns: 1fr; }
+    .team-row {
+      grid-template-columns: auto 1fr auto;
+      grid-template-areas:
+        'swatch yr apps'
+        'body body body';
+      row-gap: 12px;
+      column-gap: 14px;
+      padding: 14px 16px;
+    }
+    .yr { grid-area: yr; }
+    .swatch { grid-area: swatch; width: 36px; height: 36px; font-size: 11px; }
+    .swatch.long { font-size: 9px; }
+    .team-row > div:nth-child(3) { grid-area: body; }
+    .apps {
+      grid-area: apps;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .apps b { font-size: 18px; margin-bottom: 0; }
+  }
+  .yr {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--f1-muted);
+    white-space: nowrap;
+  }
+  .swatch {
+    width: 44px; height: 44px;
+    background: var(--team-primary);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+  .swatch.grey { background: #64748b; }
+  .swatch.long { font-size: 10px; letter-spacing: 0.02em; }
+  .team-name {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+  .team-role {
+    color: var(--f1-muted);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+  .apps {
+    text-align: right;
+    color: var(--f1-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .apps b {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--f1-text);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .todo { color: var(--f1-muted); font-style: italic; font-size: 12px; }
+
+  /* entry 直下のネスト箇条書き (担当領域の詳細) */
+  .team-details {
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+    max-width: 640px;
+  }
+  .team-details li {
+    position: relative;
+    padding-left: 16px;
+    color: var(--f1-muted);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+  .team-details li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--f1-red);
+  }
+
+  /* Loan Spells (インターン) — 本表より一段控えめな細行テーブル */
+  .loans { margin-top: 28px; }
+  .loans-title {
+    margin: 0 0 12px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--f1-grey-3);
+  }
+  .loan-rows {
+    display: grid;
+    grid-template-columns: minmax(120px, max-content) 1fr auto;
+    background: var(--f1-dark-2);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .loan-row {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    gap: 20px;
+    align-items: center;
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .loan-row:last-child { border-bottom: none; }
+  @media (max-width: 640px) {
+    .loan-row { grid-template-columns: 1fr auto; }
+    .loan-yr { grid-column: 1 / -1; }
+  }
+  .loan-yr {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--f1-muted);
+    white-space: nowrap;
+  }
+  .loan-name {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--f1-text);
+  }
+  .loan-tag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--f1-grey-3);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 3px 8px;
+    white-space: nowrap;
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+// f1.com の BundleHeader 再現: full-width の赤い水平 racing line separator
+// (バー2本が左から右へ伸び, 右端に 45° カット + slab. SVG 実測 scale 0.12 =
+//  高さ 24px, bar 11px + gap 1.5px + bar 11.5px) + その下に display 見出し.
+// clip-path は左端基準のまま scaleX(-1) でミラーして右端配置にしている.
+interface Props {
+  title: string
+  // 赤い racing line separator を出すか (ページ先頭セクションでは省く)
+  separator?: boolean
+}
+const { title, separator = true } = Astro.props
+---
+
+<div class="sec-head">
+  {separator && <div class="sep" aria-hidden="true" />}
+  <h2>{title}</h2>
+</div>
+
+<style>
+  .sec-head { margin-bottom: 28px; }
+  .sep {
+    position: relative;
+    height: 24px;
+    margin-bottom: 24px;
+    /* 左右反転 + 上下反転 (= 180° 回転) */
+    transform: scale(-1, -1);
+  }
+  /* (ミラー後: 右端) slab (45° 平行四辺形) */
+  .sep::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--f1-red);
+    clip-path: polygon(24px 0, 40px 0, 16px 100%, 0 100%);
+  }
+  /* (ミラー後) 左から伸びる水平バー2本, 右端は slab と平行な 45° カット (ツラ) */
+  .sep::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      var(--f1-red) 0 11px,
+      transparent 11px 12.5px,
+      var(--f1-red) 12.5px 24px
+    );
+    clip-path: polygon(41px 0, 100% 0, 100% 100%, 17px 100%);
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 3.4vw, 38px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+    color: var(--f1-text);
+  }
+</style>

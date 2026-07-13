@@ -1,0 +1,98 @@
+---
+import '@/components/f1/tokens.css'
+import { profile } from '@/lib/profile'
+import TopNav from '@/components/f1/TopNav.astro'
+import Tabs from '@/components/f1/Tabs.astro'
+import Hero from '@/components/f1/Hero.astro'
+import Statistics from '@/components/f1/Statistics.astro'
+import Biography from '@/components/f1/Biography.astro'
+import TeamHistory from '@/components/f1/TeamHistory.astro'
+import ProjectsGallery from '@/components/f1/ProjectsGallery.astro'
+import ResearchSection from '@/components/f1/ResearchSection.astro'
+import InfoFooter from '@/components/f1/InfoFooter.astro'
+
+// Projects (プロダクト) と Publications (業績) はセクションを分けて表示する
+const products = profile.projects.filter((p) => p.category !== 'Publication')
+const publications = profile.projects.filter((p) => p.category === 'Publication')
+---
+
+<!doctype html>
+<html lang="ja" data-lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // 描画前に言語を確定 (FOUC 防止).
+      // 手動トグル (localStorage) > ブラウザの言語設定 (ja 系なら ja, それ以外 en).
+      const lang =
+        localStorage.getItem('lang') ||
+        ((navigator.language || '').toLowerCase().startsWith('ja') ? 'ja' : 'en')
+      document.documentElement.dataset.lang = lang
+      document.documentElement.lang = lang
+    </script>
+    <title>{profile.nameEn} - Student for JAIST</title>
+    <meta name="description" content={`${profile.nameEn} (${profile.nameJa}) — ${profile.role}`} />
+    <link rel="icon" type="image/png" href="/logo-f1-transparent.png" />
+    <link rel="apple-touch-icon" href="/logo-f1-transparent.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Dela+Gothic+One&family=Kode+Mono:wght@400;700&family=Oxanium:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta property="og:title" content={`${profile.nameEn} — h-takahara.com`} />
+    <meta property="og:description" content={`${profile.nameEn} (${profile.nameJa}) — ${profile.role}`} />
+    <meta property="og:image" content="/logo-f1.png" />
+    <meta property="og:type" content="profile" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <TopNav />
+    <Tabs />
+    <Hero
+      firstName={profile.nameEnFirst}
+      lastName={profile.nameEnLast}
+      nation={profile.nation}
+      nationCode={profile.nationCode}
+      clubName={profile.club.name}
+      shirtNumber={profile.shirtNumber}
+      photoSrc="/hero-photo.png"
+      ctaHref={profile.contact.github}
+      ctaLabel="GitHub"
+    />
+    <main class="page-main p-12 lg:p-16 max-[720px]:p-6">
+      <Statistics profile={profile} />
+      <Biography
+      bio={profile.bio}
+      bioEn={profile.bioEn}
+      outro={profile.bioOutro?.f1}
+      outroEn={profile.bioOutro?.f1En}
+      quote={profile.quote}
+      quoteEn={profile.quoteEn}
+      quoteBy={profile.quoteBy}
+      birthDate={profile.birthDate}
+      birthPlace={`${profile.birthplace}, ${profile.nation}`}
+      photo={profile.photo}
+    />
+    <TeamHistory
+      entries={[...(profile.work ?? []), ...profile.education]}
+      loans={profile.internships}
+    />
+    <ProjectsGallery projects={products} />
+    <ResearchSection
+      research={profile.research}
+      researchEn={profile.researchEn}
+      publications={publications}
+    />
+    </main>
+    <InfoFooter profile={profile} />
+  </body>
+</html>
+
+<style>
+  /* アンカージャンプの着地補正: 固定ヘッダー (mainnav + race strip) と
+   * タブバーの高さぶん, セクションタイトルが隠れないようにする */
+  :global(section[id]) {
+    scroll-margin-top: calc(var(--sticky-head-h, 0px) + var(--tabbar-h, 47px) + 16px);
+  }
+</style>
