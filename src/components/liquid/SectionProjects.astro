@@ -40,6 +40,11 @@ for (const p of projects) {
                 {p.url.replace(/^https?:\/\//, '')} →
               </a>
             )}
+            {p.deployUrl && (
+              <a class="i-link launch" href={p.deployUrl} target="_blank" rel="noopener noreferrer">
+                Launch: {p.deployUrl.replace(/^https?:\/\//, '')} →
+              </a>
+            )}
           </div>
         ))}
       </div>
@@ -85,7 +90,8 @@ for (const p of projects) {
     display: grid;
     gap: 14px;
     padding-left: 14px;
-    border-left: 2px solid var(--rule);
+    /* MEDIUM-1: --rule (0.15 alpha) は glass 背景で消えるため, muted を薄く敷いて視認性確保 */
+    border-left: 2px solid color-mix(in srgb, var(--muted) 25%, transparent);
     margin-left: 4px;
   }
   .item {
@@ -99,7 +105,8 @@ for (const p of projects) {
   .item::before {
     content: '';
     position: absolute;
-    left: -20px;
+    /* HIGH-1: dot 中心を rail 中心と揃える (border-left 2px + padding-left 14px + item negative margin -4px の計算で -15) */
+    left: -15px;
     top: 8px;
     width: 8px;
     height: 8px;
@@ -133,11 +140,18 @@ for (const p of projects) {
     margin: 4px 0 0;
   }
   .i-link {
-    display: inline-block;
+    /* 縦積みで横並びの窮屈さ回避. width: fit-content で残り行がクリック可能に見えないよう */
+    display: block;
+    width: fit-content;
     margin-top: 4px;
     font-size: 12px;
     color: var(--link);
     font-weight: 500;
+  }
+  /* MEDIUM-3: deploy 先 (動くデモ) は system green で "live" を明示. F1 の launch link と同思想 */
+  .i-link.launch { color: #34c759; }
+  @media (prefers-color-scheme: dark) {
+    .i-link.launch { color: #30d158; }
   }
 
   /* todo item は既存挙動を継承 (色薄く + italic) */
@@ -145,4 +159,18 @@ for (const p of projects) {
   .i-title.todo,
   .i-desc.todo { color: var(--muted); font-style: italic; }
   .i-desc.todo { font-size: 12px; }
+
+  /* MEDIUM-2: mobile で title と cat-tag を縦積みに (flex-wrap の 2 行目落ち回避). gap で title と cat-tag の隙間確保 */
+  @media (max-width: 480px) {
+    .item-top {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+  }
+
+  /* LOW-2: tap device で URL リンクの hit-box を 44px 相当に広げる (見た目は変えず) */
+  @media (hover: none) {
+    .i-link { padding: 8px 0; display: block; }
+  }
 </style>
