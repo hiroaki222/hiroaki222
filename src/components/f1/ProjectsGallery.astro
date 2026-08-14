@@ -28,7 +28,13 @@ const { projects, id = 'projects' } = Astro.props
                 <span class="stack-val">
                   {p.stack.map((s, i) => (
                     <>
-                      {i > 0 && <span class="stack-sep">/</span>}
+                      {i > 0 && (
+                        <>
+                          {' '}
+                          <span class="stack-sep">/</span>
+                          {' '}
+                        </>
+                      )}
                       <span class="stack-item">{s}</span>
                     </>
                   ))}
@@ -169,9 +175,13 @@ const { projects, id = 'projects' } = Astro.props
     font-size: 11px;
     color: #d8d8d8;
     letter-spacing: 0.02em;
+    /* 各 stack-item / stack-sep の間に text-node の whitespace を挟むため, 自然に word-break される. */
   }
   .stack-sep {
     color: var(--f1-red);
-    margin: 0 6px;
+  }
+  .stack-item {
+    /* 単一 tag 内は改行させない (「Cloudflare Workers」等が中で割れないように). */
+    white-space: nowrap;
   }
 </style>
