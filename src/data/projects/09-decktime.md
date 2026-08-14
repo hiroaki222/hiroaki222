@@ -7,6 +7,6 @@ descriptionEn: "Full-screen countdown timer PWA for DJ sets. Three-panel layout 
 url: https://github.com/hiroaki222/decktime
 deployUrl: https://decktime.hiroaki222.com
 category: Product
-stack: [Vanilla HTML/CSS/JS, Chakra Petch, Cloudflare Pages]
+stack: [Vanilla HTML/CSS/JS, Cloudflare Pages]
 todo: false
 ---
