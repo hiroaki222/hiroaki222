@@ -35,6 +35,11 @@ for (const p of projects) {
               <span class="i18n-ja" set:html={renderInline(p.description)} />
               <span class="i18n-en" set:html={renderInline(p.descriptionEn ?? p.description)} />
             </p>
+            {p.stack && p.stack.length > 0 && (
+              <div class="stack">
+                {p.stack.map((s) => <span class="stack-tag">{s}</span>)}
+              </div>
+            )}
             {p.url && (
               <a class="i-link" href={p.url} target="_blank" rel="noopener noreferrer">
                 {p.url.replace(/^https?:\/\//, '')} →
@@ -152,6 +157,29 @@ for (const p of projects) {
   .i-link.launch { color: #34c759; }
   @media (prefers-color-scheme: dark) {
     .i-link.launch { color: #30d158; }
+  }
+
+  /* Stack: Glass pill — translucent rounded pill tags, macOS Vibrancy 系 */
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .stack-tag {
+    background: color-mix(in srgb, var(--muted) 8%, transparent);
+    color: var(--muted);
+    font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
+    font-size: 10.5px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  @media (prefers-color-scheme: dark) {
+    .stack-tag {
+      background: color-mix(in srgb, var(--muted) 12%, transparent);
+    }
   }
 
   /* todo item は既存挙動を継承 (色薄く + italic) */

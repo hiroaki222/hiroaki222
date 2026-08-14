@@ -6,5 +6,6 @@ description: "自治体のマンホール点検を, 市民参加のゲーミフ�
 descriptionEn: "A web app that turns municipal manhole inspection into citizen-powered gamification — photo submissions, points, and rankings — at a fraction of the usual cost. Rebuilt cleanly from scratch, solo, replacing a legacy implementation plagued by hand-rolled auth and heavy rendering. React Router v7 / Hono on AWS Lambda / PostGIS / SST v3 (IaC), with ADRs recording technical decisions."
 url: null
 category: Product
+stack: [React Router v7, Hono, AWS Lambda, PostGIS, SST v3]
 todo: false
 ---

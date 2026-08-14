@@ -6,5 +6,6 @@ description: このサイト. Astro で構築, Cloudflare Pages にデプロイ.
 descriptionEn: This site. Built with Astro and deployed to Cloudflare Pages. Profile content is shared as Markdown frontmatter, and GitHub Actions deploys to two domains via a build matrix on every push to main.
 url: https://github.com/hiroaki222/hiroaki222
 category: Product
+stack: [Astro, Cloudflare Pages, GitHub Actions]
 todo: false
 ---

@@ -7,5 +7,6 @@ description: "研究データ収集のための Web アノテーション基盤�
 descriptionEn: "A web annotation platform for research data collection, designed and built solo. Collected ~98k aesthetic ratings (7-point overall + 9 aesthetic emotions) from 142 raters across three interleaved domains — art, fashion, and scenery — and the data became the cross-domain PIAA dataset XPASS-Vis (arXiv). Next.js 15 / React 19 / Supabase, bilingual UI. The last project I wrote entirely by hand, without AI coding assistance."
 url: https://github.com/hiroaki222/aesthetic-prediction-data-collector
 category: Research × Product
+stack: [Next.js 15, React 19, Supabase]
 todo: false
 ---

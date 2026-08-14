@@ -6,5 +6,6 @@ description: "GUI アプリの音源分離ツール Ultimate Vocal Remover を, 
 descriptionEn: "A fork that turns Ultimate Vocal Remover, a GUI source-separation app, into a headless CLI. Strips the tkinter GUI, reuses the separation engines (MDX-Net / VR / Demucs) as-is, and exposes a JSON-based discover → configure → run interface — an agent-native design that AI agents like Claude Code can operate without a human in the loop."
 url: https://github.com/hiroaki222/uvr-headless
 category: OSS
+stack: [Python, MDX-Net, VR, Demucs]
 todo: false
 ---

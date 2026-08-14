@@ -6,5 +6,6 @@ description: "USB に入れる曲が現場で鳴るかを出発前に確かめ, 
 descriptionEn: "A DJ tool that answers whether the tracks on a USB stick will play in the booth, and converts only the ones that will not. The compatibility table is transcribed from the manuals of ten Pioneer DJ and AlphaTheta players, and covers the filesystem and the shape of the folder tree (eight levels, ten thousand entries per folder) alongside codec, sample rate, bit depth and bitrate. Two of the three targets guarantee playback on all ten; the third is the copy you keep. It refuses to re-encode a lossy source above the bitrate it arrived with, and refuses two conversions that would claim one destination. An LGPL ffmpeg is cross-built for macOS and Windows and shipped inside, with the bundle's code signature verified in CI. Rust / Tauri 2 / React 19, with the CLI and the window over one core."
 url: https://github.com/hiroaki222/transcrate
 category: OSS
+stack: [Rust, Tauri 2, React 19]
 todo: false
 ---

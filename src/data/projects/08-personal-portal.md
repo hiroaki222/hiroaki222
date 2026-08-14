@@ -6,5 +6,6 @@ description: "Chrome の新規タブに開く自分専用ポータル. マルチ
 descriptionEn: "A personal portal that replaces Chrome's new-tab page. Combines a multi-engine prefixed search bar (one-key switching across Google, Perplexity, GitHub, YouTube, etc.), auto-generated daily journals, SM-2-based spaced-repetition reminders, and task and bookmark management on one screen. Continues the Markdown-based knowledge workflow with D1 FTS5 full-text search and per-path access control that mixes private-only and selectively public pages. TanStack Start / Hono / Cloudflare D1 / Pages / Workers — entirely on the free tier."
 url: null
 category: Product
+stack: [TanStack Start, Hono, Cloudflare D1, Cloudflare Pages, Workers]
 todo: false
 ---
