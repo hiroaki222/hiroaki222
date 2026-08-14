@@ -7,5 +7,6 @@ description: "自治体インターンで開発した, 独立ネットワーク�
 descriptionEn: "A from-scratch, self-hostable RAG chatbot for isolated networks (e.g. LGWAN, the closed network for Japanese local governments), built during a local-government internship. LDAP authentication, chat history, and admin tools enable in-house document search and answer generation with no internet access. Led the six-person team as PM. Python / LangChain / FastAPI / Next.js / Docker."
 url: https://github.com/hiroaki222/Local-Knowledge-LLM
 category: Product
+stack: [Python, LangChain, FastAPI, Next.js, Docker]
 todo: false
 ---

@@ -83,6 +83,8 @@ export const projectSchema = z.object({
   url: nullableString,
   deployUrl: optionalNullableString,
   category: z.string(),
+  // 技術スタック. Projects section (0x) で使う想定. 未指定時は表示なし. 表示順は配列順のまま.
+  stack: z.array(z.string()).optional(),
   todo: z.boolean().optional(),
 })
 
