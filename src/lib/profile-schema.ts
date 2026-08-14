@@ -74,7 +74,9 @@ export const ratingSchema = z.object({
 })
 
 export const projectSchema = z.object({
-  year: z.string(),
+  // 月精度. 表示用の year 文字列は profile.ts で releaseDate と ongoing から導出する.
+  releaseDate: z.string().regex(/^\d{4}-\d{2}$/, 'releaseDate must be YYYY-MM'),
+  ongoing: z.boolean().default(false),
   name: z.string(),
   description: z.string(),
   descriptionEn: z.string().optional(),
@@ -176,6 +178,8 @@ export type ProjectFrontmatter = z.infer<typeof projectSchema>
 
 export type Project = ProjectFrontmatter & {
   slug: string
+  /** Display label derived from releaseDate/ongoing, e.g. "2026" or "2026 –". */
+  year: string
 }
 
 export type Profile = z.infer<typeof metaSchema> &
