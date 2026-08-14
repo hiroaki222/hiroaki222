@@ -8,7 +8,7 @@
 import { getCollection, getEntry } from 'astro:content'
 import type {
   Profile,
-  Project,
+  ProjectFrontmatter,
 } from '@/lib/profile-schema'
 
 export type {
@@ -27,9 +27,11 @@ const required = <T>(entry: T | undefined, label: string): T => {
   return entry
 }
 
-const startYear = (project: Project) => Number(project.year.match(/\d{4}/)?.[0] ?? 0)
-const ongoing = (project: Project) => (project.year.includes('–') ? 1 : 0)
 const slugOf = (id: string) => id.replace(/\.md$/, '').replace(/^\d+-/, '')
+
+// 継続中のプロジェクトは年に「–」を付けて開始年であることを示す.
+const displayYear = ({ releaseDate, ongoing }: ProjectFrontmatter) =>
+  ongoing ? `${releaseDate.slice(0, 4)} –` : releaseDate.slice(0, 4)
 
 const loadProfile = async (): Promise<Profile> => {
   const [meta, bio, education, skills, work, research, rating, projectEntries] = await Promise.all([
@@ -52,12 +54,15 @@ const loadProfile = async (): Promise<Profile> => {
   const ratingEntry = required(rating, 'rating/rating')
 
   // projects は src/data/projects/ に 1プロジェクト = 1md.
-  // 表示順は年の降順 (新しいものが先). 同年は進行中 (year に「–」) を先に,
-  // それも同じならファイル名の辞書順で安定させる.
+  // 表示順は releaseDate の降順のみ. 同月はファイル名の辞書順で安定させる.
   const projects = projectEntries
     .sort((a, b) => a.id.localeCompare(b.id))
-    .map((entry) => ({ slug: slugOf(entry.id), ...entry.data }))
-    .sort((a, b) => startYear(b) - startYear(a) || ongoing(b) - ongoing(a))
+    .map((entry) => ({
+      slug: slugOf(entry.id),
+      year: displayYear(entry.data),
+      ...entry.data,
+    }))
+    .sort((a, b) => b.releaseDate.localeCompare(a.releaseDate))
 
   return {
     ...metaEntry.data,
