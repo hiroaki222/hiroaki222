@@ -97,7 +97,7 @@ const chevron =
                   <span class="name">readme.md</span>
                 </a>
                 {p.url && (
-                  <a class="node" href={p.url} title={urlFileName(p.url)} target="_blank" rel="noopener noreferrer">
+                  <a class="node" href={p.url} data-href-en={p.urlEn ?? undefined} title={urlFileName(p.url)} target="_blank" rel="noopener noreferrer">
                     <span class="icon" set:html={`<svg viewBox="0 0 16 16">${linkIcon}</svg>`} />
                     <span class="name">{urlFileName(p.url)}</span>
                   </a>

@@ -49,7 +49,7 @@ const { projects, id = 'projects' } = Astro.props
               )}
               {p.url ? (
                 // GitHub repo へ飛ぶものは View Repo, それ以外 (論文・詳細ページ等) は Read More
-                <a class="more" href={p.url} target="_blank" rel="noopener noreferrer">
+                <a class="more" href={p.url} data-href-en={p.urlEn ?? undefined} target="_blank" rel="noopener noreferrer">
                   {p.url.includes('github.com') ? 'View Repo' : 'Read More'}
                 </a>
               ) : !p.deployUrl && (

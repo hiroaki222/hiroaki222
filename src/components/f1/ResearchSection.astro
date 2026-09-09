@@ -30,6 +30,7 @@ const paras = (t: string) => t.split(/\n+/).map((s) => s.trim()).filter(Boolean)
               <Tag
                 class="pub-row"
                 href={p.url ?? undefined}
+                data-href-en={p.urlEn ?? undefined}
                 target={p.url ? '_blank' : undefined}
                 rel={p.url ? 'noopener noreferrer' : undefined}
               >
