@@ -1,0 +1,59 @@
+---
+// 実名 (高原 大明) での検索にヒットさせるための head メタ一式。
+// title / description / canonical / OG / JSON-LD を 2 つの layout で共有する。
+import { profile } from '@/lib/profile'
+
+interface Props {
+  siteName: string
+  /** サイトルート基準の OG 画像パス。絶対 URL に解決して出力する。 */
+  ogImage: string
+}
+
+const { siteName, ogImage } = Astro.props
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href
+const ogImageUrl = new URL(ogImage, Astro.site).href
+const title = `${profile.nameJa} (${profile.nameEn}) | ${profile.roleShort}`
+
+// 検索エンジンに「別ドメインの 2 サイト + GitHub は同一人物」と伝えて実名クエリの評価を束ねる。
+const sameAs = [
+  ...profile.sites.filter((url) => url !== Astro.site?.origin),
+  profile.contact.github,
+]
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.nameJa,
+  alternateName: [profile.nameEn, profile.nameJa.replace(/\s/g, '')],
+  givenName: profile.nameEnFirst,
+  familyName: profile.nameEnLast,
+  url: canonical,
+  image: ogImageUrl,
+  jobTitle: profile.role,
+  affiliation: {
+    '@type': 'CollegeOrUniversity',
+    name: profile.club.name,
+    alternateName: profile.club.nameJa,
+  },
+  nationality: profile.nation,
+  description: profile.seoDescription,
+  sameAs,
+}
+---
+
+<title>{title}</title>
+<meta name="description" content={profile.seoDescription} />
+<link rel="canonical" href={canonical} />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<meta property="og:type" content="profile" />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={profile.seoDescription} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:locale" content="ja_JP" />
+<meta property="profile:first_name" content={profile.nameEnFirst} />
+<meta property="profile:last_name" content={profile.nameEnLast} />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json" is:inline set:html={JSON.stringify(person)} />
