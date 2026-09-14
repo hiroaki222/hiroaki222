@@ -1,0 +1,25 @@
+---
+// data-href-en を持つリンクの遷移先を言語トグルに追従させる.
+// (同じ論文が ja/en 版で別 URL を持つ J-STAGE のようなケース用.)
+// 言語トグルは複数コンポーネントに散っているので, 個々のトグルに配線するのではなく
+// html[data-lang] の変化を監視して一括で反映する.
+---
+
+<script>
+  const links = document.querySelectorAll<HTMLAnchorElement>('a[data-href-en]')
+  if (links.length > 0) {
+    links.forEach((a) => {
+      a.dataset.hrefJa = a.href
+    })
+    const apply = () => {
+      const en = document.documentElement.dataset.lang === 'en'
+      links.forEach((a) => {
+        a.href = (en ? a.dataset.hrefEn : a.dataset.hrefJa) ?? a.href
+      })
+    }
+    apply()
+    new MutationObserver(apply).observe(document.documentElement, {
+      attributeFilter: ['data-lang'],
+    })
+  }
+</script>

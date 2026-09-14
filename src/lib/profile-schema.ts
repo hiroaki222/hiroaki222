@@ -81,6 +81,8 @@ export const projectSchema = z.object({
   description: z.string(),
   descriptionEn: z.string().optional(),
   url: nullableString,
+  // ja/en で別 URL を持つ外部リンク用 (未指定なら言語に関わらず url を使う).
+  urlEn: optionalNullableString,
   deployUrl: optionalNullableString,
   category: z.string(),
   // 技術スタック. Projects section (0x) で使う想定. 未指定時は表示なし. 表示順は配列順のまま.

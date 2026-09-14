@@ -41,8 +41,9 @@ for (const p of projects) {
               </div>
             )}
             {p.url && (
-              <a class="i-link" href={p.url} target="_blank" rel="noopener noreferrer">
-                {p.url.replace(/^https?:\/\//, '')} →
+              <a class="i-link" href={p.url} data-href-en={p.urlEn ?? undefined} target="_blank" rel="noopener noreferrer">
+                <span class="i18n-ja">{p.url.replace(/^https?:\/\//, '')} →</span>
+                <span class="i18n-en">{(p.urlEn ?? p.url).replace(/^https?:\/\//, '')} →</span>
               </a>
             )}
             {p.deployUrl && (
