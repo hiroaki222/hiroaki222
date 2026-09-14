@@ -1,9 +1,9 @@
 ---
-# Work entries — education と同じ shape (years/institution/program/note/swatch)．
-# details は entry 直下にネスト表示する箇条書き (要コンポーネント対応)．
+# Work entries — education と同じ shape (years/institution/program/note/swatch)。
+# details は entry 直下にネスト表示する箇条書き (要コンポーネント対応)。
 # internships は Career 本体とは別枠 — F1Layout では選手名鑑の Loan Spells
-# (期限付き移籍) 風の小さめセクションとして表示する想定．
-# Career History では work → education の順で表示される．
+# (期限付き移籍) 風の小さめセクションとして表示する想定。
+# Career History では work → education の順で表示される。
 work:
   - years: 2026.09 – 現在
     yearsEn: Sep 2026 – present
@@ -22,7 +22,7 @@ work:
     institutionEn: Dioptra Inc.
     program: ソフトウェアエンジニア
     programEn: Software Engineer
-    note: 技術選定・アーキテクチャ設計から実装・運用まで一貫して担当．組織横断の開発規約・CI/CD・AI コードレビュー基盤の整備．
+    note: 技術選定・アーキテクチャ設計から実装・運用まで一貫して担当。組織横断の開発規約・CI/CD・AI コードレビュー基盤の整備。
     noteEn: End-to-end from technology selection and architecture design to implementation and operations. Org-wide engineering standards, CI/CD, and AI code-review infrastructure.
     swatch: DIO
     swatchColor: rgb(209, 185, 159)
