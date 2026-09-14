@@ -25,7 +25,7 @@ work:
     note: 技術選定・アーキテクチャ設計から実装・運用まで一貫して担当。組織横断の開発規約・CI/CD・AI コードレビュー基盤の整備。
     noteEn: End-to-end from technology selection and architecture design to implementation and operations. Org-wide engineering standards, CI/CD, and AI code-review infrastructure.
     swatch: DIO
-    swatchColor: rgb(209, 185, 159)
+    swatchColor: rgb(107, 104, 58)
     todo: false
 internships:
   - years: 2026.02 – 2026.02
