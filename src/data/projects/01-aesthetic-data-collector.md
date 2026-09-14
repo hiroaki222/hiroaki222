@@ -1,5 +1,5 @@
 ---
-# 1プロジェクト = 1ファイル. 表示順はファイル名の辞書順 (01-, 02-, ...).
+# 1プロジェクト = 1ファイル．表示順はファイル名の辞書順 (01-，02-，...)．
 releaseDate: "2025-07"
 ongoing: false
 name: Aesthetic Prediction Data Collector

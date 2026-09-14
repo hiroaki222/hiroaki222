@@ -1,5 +1,5 @@
 ---
-# 自治体名は出さない (社名ぼかしルール準拠, 「自治体インターン」表記)
+# 自治体名は出さない (社名ぼかしルール準拠，「自治体インターン」表記)
 releaseDate: "2024-07"
 ongoing: false
 name: Local-Knowledge-LLM
