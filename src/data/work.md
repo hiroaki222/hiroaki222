@@ -5,13 +5,24 @@
 # (期限付き移籍) 風の小さめセクションとして表示する想定.
 # Career History では work → education の順で表示される.
 work:
-  - years: 2025.06 – 現在
-    yearsEn: Jun 2025 – present
+  - years: 2026.09 – 現在
+    yearsEn: Sep 2026 – present
+    institution: フリーランス
+    institutionEn: Freelance
+    program: ソフトウェアエンジニア (業務委託)
+    programEn: Software Engineer (contract)
+    note: null
+    noteEn: null
+    swatch: FL
+    swatchColor: rgb(100, 116, 139)
+    todo: false
+  - years: 2025.06 – 2026.09
+    yearsEn: Jun 2025 – Sep 2026
     institution: 株式会社Dioptra
     institutionEn: Dioptra Inc.
     program: ソフトウェアエンジニア
     programEn: Software Engineer
-    note: 技術選定・アーキテクチャ設計から実装・運用まで一貫して担当. 組織横断の開発規約・CI/CD・AI コードレビュー基盤の整備.
+    note: 技術選定・アーキテクチャ設計から実装・運用まで一貫して担当．組織横断の開発規約・CI/CD・AI コードレビュー基盤の整備．
     noteEn: End-to-end from technology selection and architecture design to implementation and operations. Org-wide engineering standards, CI/CD, and AI code-review infrastructure.
     swatch: DIO
     swatchColor: rgb(209, 185, 159)

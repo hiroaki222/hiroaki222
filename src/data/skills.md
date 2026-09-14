@@ -18,32 +18,32 @@ assessment:
       label: Cloud / Infra
       score: 88
       note: Multi-cloud serverless IaC (CF + AWS + GCP), OIDC deploy, 4-env CI/CD — built solo
-      noteJa: マルチクラウド serverless IaC (CF + AWS + GCP), OIDC deploy, 4 環境 CI/CD を単独構築
+      noteJa: マルチクラウド serverless IaC (CF + AWS + GCP)，OIDC deploy，4 環境 CI/CD を単独構築
     - key: FRO
       label: Frontend
       score: 86
       note: React 19 / TanStack Start / WebGL GIS rendering, adopts latest generation on release
-      noteJa: React 19 / TanStack Start / WebGL GIS 描画. 最新世代をリリース直後に実戦投入
+      noteJa: React 19 / TanStack Start / WebGL GIS 描画．最新世代をリリース直後に実戦投入
     - key: BCK
       label: Backend
       score: 84
-      note: Hono + FastAPI, 4 auth stacks, systematic security hardening, idempotency design
-      noteJa: Hono + FastAPI の 2 系統, 認証 4 方式, セキュリティ横断対処, 冪等性設計
+      note: Hono + FastAPI, 5 auth stacks, systematic security hardening, idempotency design
+      noteJa: Hono + FastAPI の 2 系統，認証 5 方式，セキュリティ横断対処，冪等性設計
     - key: DAT
       label: Data / DB
       score: 83
       note: PostGIS + GiST spatial indexing, engine-aware migrations (59 total)
-      noteJa: PostGIS + GiST 空間インデックス, DB エンジンの制約を理解した migration 設計 (計 59 本)
+      noteJa: PostGIS + GiST 空間インデックス，DB エンジンの制約を理解した migration 設計 (計 59 本)
     - key: PRC
       label: Practices / Quality
       score: 78
       note: Org-wide conventions authored solo; latest repo has 109 test files + k6 load testing
-      noteJa: org 開発規約を単独整備. 最新 repo はテスト 109 ファイル + k6 負荷試験基盤
+      noteJa: org 開発規約を単独整備．最新 repo はテスト 109 ファイル + k6 負荷試験基盤
     - key: MLR
       label: ML / Research
       score: 76
       note: PyTorch + owned CV detection/tracking pipeline; experiment tracking infra still thin
-      noteJa: PyTorch + CV 検出/追跡パイプラインを所有. 実験管理基盤は未整備
+      noteJa: PyTorch + CV 検出/追跡パイプラインを所有．実験管理基盤は未整備
 skills:
   - label: Languages
     items: [TypeScript (JavaScript), Python, SQL, tex, Bash, C/C++]
