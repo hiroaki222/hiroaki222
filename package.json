@@ -10,10 +10,10 @@
     "gen:liquid": "cp src/pages/_liquid.astro src/pages/index.astro && cp src/pages/_rating.astro src/pages/rating.astro",
     "dev": "bun run dev:f1",
     "dev:f1": "bun run gen:f1 && astro dev --port 4321",
-    "dev:liquid": "bun run gen:liquid && astro dev --port 4322",
+    "dev:liquid": "bun run gen:liquid && SITE_URL=https://hiroaki222.com astro dev --port 4322",
     "build": "bun run build:f1",
     "build:f1": "bun run gen:f1 && astro build --outDir dist/f1",
-    "build:liquid": "bun run gen:liquid && astro build --outDir dist/liquid",
+    "build:liquid": "bun run gen:liquid && SITE_URL=https://hiroaki222.com astro build --outDir dist/liquid",
     "build:all": "bun run build:f1 && bun run build:liquid",
     "preview": "astro preview",
     "deploy:f1": "bun run build:f1 && wrangler pages deploy dist/f1 --project-name=h-takahara",
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@types/node": "^26.5.1",
     "typescript": "^5.9.3",
     "wrangler": "^4.0.0"
   }

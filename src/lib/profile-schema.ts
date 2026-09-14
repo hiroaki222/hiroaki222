@@ -97,6 +97,8 @@ export const metaSchema = z.object({
   nameEnLast: z.string(),
   role: z.string(),
   roleShort: z.string(),
+  seoDescription: z.string(),
+  sites: z.array(z.url()).min(1),
   tagline: z.string(),
   shirtNumber: z.string(),
   nation: z.string(),
@@ -116,6 +118,7 @@ export const metaSchema = z.object({
   joined: z.string(),
   club: z.object({
     name: z.string(),
+    nameJa: z.string(),
     label: z.string(),
     since: z.string(),
     class: z.string(),

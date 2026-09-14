@@ -6,6 +6,12 @@ nameEn: Hiroaki Takahara
 nameEnFirst: Hiroaki
 nameEnLast: Takahara
 role: Engineer & AI Researcher · MSc Student at JAIST
+# 検索結果に出る説明文 (meta description / JSON-LD)。実名と専門が 1 文で分かる形にする。
+seoDescription: 高原 大明 (Hiroaki Takahara) のポートフォリオ。JAIST 情報科学研究科でパーソナライズド画像美的評価を研究しながら、Web アプリからインフラまで手を動かすエンジニアです。
+# 同じ人物のサイトを 2 ドメインで運用しているため、JSON-LD の sameAs で相互に紐づける。
+sites:
+  - https://h-takahara.com
+  - https://hiroaki222.com
 roleShort: Engineer & AI Researcher
 tagline: Software, infrastructure, and human-centered AI
 shirtNumber: "22"
@@ -27,6 +33,7 @@ currentSeason: 2026/27
 joined: "2025"
 club:
   name: JAIST
+  nameJa: 北陸先端科学技術大学院大学
   label: JAIST 情報科学研究科
   since: "2025"
   class: MSc / Info Science
@@ -46,6 +53,6 @@ contact:
   # スパム対策: フルのアドレスを repo にも HTML にも書かず user/domain 分割で
   # 持ち、client-side JS で組み立てる (InfoFooter 参照)。repo は public なので
   # ここに user@domain 形式で書かないこと。
-  emailUser: hiroaki
-  emailDomain: jaist.ac.jp
+  emailUser: me
+  emailDomain: h-takahara.com
 ---

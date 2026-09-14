@@ -12,6 +12,7 @@ import SectionSkills from '@/components/liquid/SectionSkills.astro'
 import SectionProjects from '@/components/liquid/SectionProjects.astro'
 import SectionProfile from '@/components/liquid/SectionProfile.astro'
 import LangHrefSync from '@/components/LangHrefSync.astro'
+import SeoHead from '@/components/SeoHead.astro'
 
 ---
 
@@ -28,15 +29,9 @@ import LangHrefSync from '@/components/LangHrefSync.astro'
       document.documentElement.dataset.lang = lang
       document.documentElement.lang = lang
     </script>
-    <title>エンジニアポートフォリオ — hiroaki222.com</title>
-    <meta name="description" content={`${profile.nameEn} (${profile.nameJa}) — ${profile.role}`} />
+    <SeoHead siteName="hiroaki222.com" ogImage="/favicon-liquid.png" />
     <link rel="icon" type="image/png" href="/favicon-liquid.png" />
     <link rel="apple-touch-icon" href="/favicon-liquid.png" />
-    <meta property="og:title" content="エンジニアポートフォリオ — hiroaki222.com" />
-    <meta property="og:description" content={`${profile.nameEn} (${profile.nameJa}) — ${profile.role}`} />
-    <meta property="og:image" content="/favicon-liquid.png" />
-    <meta property="og:type" content="profile" />
-    <meta name="twitter:card" content="summary" />
   </head>
   <body>
     <div class="window">

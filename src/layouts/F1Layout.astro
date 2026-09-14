@@ -8,6 +8,7 @@ import Statistics from '@/components/f1/Statistics.astro'
 import Biography from '@/components/f1/Biography.astro'
 import TeamHistory from '@/components/f1/TeamHistory.astro'
 import LangHrefSync from '@/components/LangHrefSync.astro'
+import SeoHead from '@/components/SeoHead.astro'
 import ProjectsGallery from '@/components/f1/ProjectsGallery.astro'
 import ResearchSection from '@/components/f1/ResearchSection.astro'
 import InfoFooter from '@/components/f1/InfoFooter.astro'
@@ -31,8 +32,7 @@ const publications = profile.projects.filter((p) => p.category === 'Publication'
       document.documentElement.dataset.lang = lang
       document.documentElement.lang = lang
     </script>
-    <title>{profile.nameEn} - Student for JAIST</title>
-    <meta name="description" content={`${profile.nameEn} (${profile.nameJa}) — ${profile.role}`} />
+    <SeoHead siteName="h-takahara.com" ogImage="/logo-f1.png" />
     <link rel="icon" type="image/png" href="/logo-f1-transparent.png" />
     <link rel="apple-touch-icon" href="/logo-f1-transparent.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -41,11 +41,6 @@ const publications = profile.projects.filter((p) => p.category === 'Publication'
       href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Dela+Gothic+One&family=Kode+Mono:wght@400;700&family=Oxanium:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
-    <meta property="og:title" content={`${profile.nameEn} — h-takahara.com`} />
-    <meta property="og:description" content={`${profile.nameEn} (${profile.nameJa}) — ${profile.role}`} />
-    <meta property="og:image" content="/logo-f1.png" />
-    <meta property="og:type" content="profile" />
-    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <TopNav />
