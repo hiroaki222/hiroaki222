@@ -1,10 +1,10 @@
 ---
-# 1プロジェクト = 1ファイル. 表示順はファイル名の辞書順 (01-, 02-, ...).
+# 1プロジェクト = 1ファイル。表示順はファイル名の辞書順 (01-、02-、...)。
 releaseDate: "2025-07"
 ongoing: false
 name: Aesthetic Prediction Data Collector
-description: "研究データ収集のための Web アノテーション基盤を単独で設計・実装. 142 名の評定者から美術・ファッション・風景 3 ドメイン交互提示で約 9.8 万件の美的評価 (7 件法 + 9 種の美的感情) を収集し, このデータがクロスドメイン PIAA データセット XPASS-Vis (arXiv) の元になった. 日英対応. AI 駆動開発に移行する前に手で書いた最後のプロジェクト."
-descriptionEn: "A web annotation platform for research data collection, designed and built solo. Collected ~98k aesthetic ratings (7-point overall + 9 aesthetic emotions) from 142 raters across three interleaved domains — art, fashion, and scenery — and the data became the cross-domain PIAA dataset XPASS-Vis (arXiv). Bilingual UI. The last project I hand-wrote before adopting AI-driven development."
+description: "研究データ収集のための Web アノテーション基盤を単独で設計・実装。142 名から約 9.8 万件の美的評価を集め、クロスドメイン PIAA データセット XPASS-Vis (arXiv) の元データになった。"
+descriptionEn: "A web annotation platform for research data collection, designed and built solo. It gathered ~98k aesthetic ratings from 142 participants, and that data became the cross-domain PIAA dataset XPASS-Vis (arXiv)."
 url: https://github.com/hiroaki222/aesthetic-prediction-data-collector
 category: Research × Product
 stack: [Next.js 15, React 19, Supabase]

@@ -7,6 +7,7 @@ import Hero from '@/components/f1/Hero.astro'
 import Statistics from '@/components/f1/Statistics.astro'
 import Biography from '@/components/f1/Biography.astro'
 import TeamHistory from '@/components/f1/TeamHistory.astro'
+import LangHrefSync from '@/components/LangHrefSync.astro'
 import ProjectsGallery from '@/components/f1/ProjectsGallery.astro'
 import ResearchSection from '@/components/f1/ResearchSection.astro'
 import InfoFooter from '@/components/f1/InfoFooter.astro'
@@ -86,6 +87,7 @@ const publications = profile.projects.filter((p) => p.category === 'Publication'
     />
     </main>
     <InfoFooter profile={profile} />
+    <LangHrefSync />
   </body>
 </html>
 
