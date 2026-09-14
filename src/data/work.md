@@ -1,9 +1,9 @@
 ---
-# Work entries — education と同じ shape (years/institution/program/note/swatch).
-# details は entry 直下にネスト表示する箇条書き (要コンポーネント対応).
+# Work entries — education と同じ shape (years/institution/program/note/swatch)．
+# details は entry 直下にネスト表示する箇条書き (要コンポーネント対応)．
 # internships は Career 本体とは別枠 — F1Layout では選手名鑑の Loan Spells
-# (期限付き移籍) 風の小さめセクションとして表示する想定.
-# Career History では work → education の順で表示される.
+# (期限付き移籍) 風の小さめセクションとして表示する想定．
+# Career History では work → education の順で表示される．
 work:
   - years: 2026.09 – 現在
     yearsEn: Sep 2026 – present
