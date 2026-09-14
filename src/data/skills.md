@@ -1,13 +1,13 @@
 ---
-# Engineering-focused skill matrix. 言語 / framework / infra 詳細.
-# 2026-07: 全 GitHub repo (個人 + 勤務先, private 含む) の実コミット分析に基づき全面改訂.
-# 載せる基準は「実プロダクト/研究での使用実績が commit で裏付けられること」.
+# Engineering-focused skill matrix．言語 / framework / infra 詳細．
+# 2026-07: 全 GitHub repo (個人 + 勤務先，private 含む) の実コミット分析に基づき全面改訂．
+# 載せる基準は「実プロダクト/研究での使用実績が commit で裏付けられること」．
 # (Rust / Go / Optuna / TanStack Query / KV / CF Pages は証拠不足で削除)
 
-# AI エージェントによる客観評価 (EAFC の選手レート風, 0-99).
+# AI エージェントによる客観評価 (EAFC の選手レート風，0-99)．
 # 2026-07 に AI エージェント 4 体が全 repo (private 含む) の本人コミットを
-# 分析して導出. スコア感覚: 90+ = Expert / 80 台 = 実運用で反復した主力領域 /
-# 70 台 = Proficient. 将来の EAFC 風レートページでも同データを使う想定.
+# 分析して導出．スコア感覚: 90+ = Expert / 80 台 = 実運用で反復した主力領域 /
+# 70 台 = Proficient．将来の EAFC 風レートページでも同データを使う想定．
 assessment:
   date: 2026-07
   method: AI agent analysis — 60+ repos, commit-level

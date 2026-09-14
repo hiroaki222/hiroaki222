@@ -1,20 +1,20 @@
 ---
-# /rating ページ (EAFC 選手レート風) の詳細データ.
-# 6 軸の本体スコアは skills.md の assessment を参照し, ここはその内訳
-# (サブスタッツ) と PlayStyles・ポジション等の演出データを持つ.
+# /rating ページ (EAFC 選手レート風) の詳細データ．
+# 6 軸の本体スコアは skills.md の assessment を参照し，ここはその内訳
+# (サブスタッツ) と PlayStyles・ポジション等の演出データを持つ．
 #
-# スコアの出どころ: 2026-07 に AI エージェント 4 体 (個人 Web/TS 系, 個人
-# Python/ML 系, 勤務先 org, 開発環境系に分担) が全 GitHub repo (private 含む)
-# の本人コミットを分析して導出. 各スコアの根拠は why (日) / whyEn (英) に記載し,
-# /rating ページではサブスタッツの hover ツールチップとして表示される.
+# スコアの出どころ: 2026-07 に AI エージェント 4 体 (個人 Web/TS 系，個人
+# Python/ML 系，勤務先 org，開発環境系に分担) が全 GitHub repo (private 含む)
+# の本人コミットを分析して導出．各スコアの根拠は why (日) / whyEn (英) に記載し，
+# /rating ページではサブスタッツの hover ツールチップとして表示される．
 # スコア感: 90+ = Expert / 80 台 = 実運用で反復した主力領域 / 70 台 = Proficient
-# / 60 以下 = 明確な弱点.
+# / 60 以下 = 明確な弱点．
 rating:
-  # main が先頭. FS = Full-Stack, INF = Infrastructure, MLR = ML/Research,
-  # REF = Referee (JFA 公認審判員 4級を実際に保有 — meta.md の licences 参照).
+  # main が先頭．FS = Full-Stack，INF = Infrastructure，MLR = ML/Research，
+  # REF = Referee (JFA 公認審判員 4級を実際に保有 — meta.md の licences 参照)．
   positions: [FS, INF, MLR, REF]
   # Skill Moves = 新技術キャッチアップ (React 19 / TanStack Start / Tailwind v4 を
-  # リリース直後に実戦投入). Weak Foot はリアルの逆足 (本人申告: 下手).
+  # リリース直後に実戦投入)．Weak Foot はリアルの逆足 (本人申告: 下手)．
   skillMoves: 5
   weakFoot: 1
   playstyles:
