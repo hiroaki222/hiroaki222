@@ -80,6 +80,8 @@ export const projectSchema = z.object({
   releaseDate: z.string().regex(/^\d{4}-\d{2}$/, 'releaseDate must be YYYY-MM'),
   ongoing: z.boolean().default(false),
   name: z.string(),
+  // 固有名ではなく普通名詞の名前を持つプロジェクト用 (未指定なら言語に関わらず name を使う).
+  nameJa: z.string().optional(),
   description: z.string(),
   descriptionEn: z.string().optional(),
   url: nullableString,

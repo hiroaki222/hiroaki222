@@ -12,7 +12,10 @@ const { project: p } = Astro.props
       <span class:list={['cat', p.todo && 'todo']}>{p.category}</span>
       <span class:list={['time', p.todo && 'todo']}>{p.year}</span>
     </div>
-    <h3 class:list={[p.todo && 'todo']}>{p.name}</h3>
+    <h3 class:list={[p.todo && 'todo']}>
+      <span class="i18n-ja">{p.nameJa ?? p.name}</span>
+      <span class="i18n-en">{p.name}</span>
+    </h3>
     <p class:list={['i18n-ja', p.todo && 'todo']}>{p.description}</p>
     <p class:list={['i18n-en', p.todo && 'todo']}>{p.descriptionEn ?? p.description}</p>
     {p.stack && p.stack.length > 0 && (

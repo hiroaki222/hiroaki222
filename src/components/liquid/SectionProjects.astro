@@ -28,7 +28,10 @@ for (const p of projects) {
         {items.map((p) => (
           <div class:list={['item', p.todo && 'todo']} data-c={p.category} id={`project-${p.slug}`}>
             <div class="item-top">
-              <span class:list={['i-title', p.todo && 'todo']}>{p.name}</span>
+              <span class:list={['i-title', p.todo && 'todo']}>
+                <span class="i18n-ja">{p.nameJa ?? p.name}</span>
+                <span class="i18n-en">{p.name}</span>
+              </span>
               <span class="cat-tag">{p.category}</span>
             </div>
             <p class:list={['i-desc', p.todo && 'todo']}>
