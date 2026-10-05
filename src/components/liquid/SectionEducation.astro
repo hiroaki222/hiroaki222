@@ -13,11 +13,11 @@ const { entries } = Astro.props
     {entries.map((e) => (
       <div class="row">
         <div>
-          <div class:list={['title', e.todo && 'todo']}>
+          <div class:list={['title', e.todo && 'todo', e.former && 'former']}>
             <span class="i18n-ja">{e.institution}</span>
             <span class="i18n-en">{e.institutionEn ?? e.institution}</span>
           </div>
-          <div class:list={['desc', e.todo && 'todo']}>
+          <div class:list={['desc', e.todo && 'todo', e.former && 'former']}>
             <span class="i18n-ja" set:html={renderInline(`${e.program}${e.note ? ` · ${e.note}` : ''}`)} />
             <span
               class="i18n-en"
@@ -64,5 +64,5 @@ const { entries } = Astro.props
   .title { font-weight: 500; }
   .desc { color: var(--muted); font-size: 12px; margin-top: 2px; grid-column: 1 / -1; }
   .date { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
-  .todo { color: var(--muted); font-style: italic; font-size: 12px; }
+  .todo, .former { color: var(--muted); font-style: italic; font-size: 12px; }
 </style>

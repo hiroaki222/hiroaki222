@@ -41,11 +41,11 @@ const seasonsFor = (years: string): string => {
             {e.swatch ?? swatchFor(e.institution, e.todo)}
           </div>
           <div>
-            <div class:list={['team-name', e.todo && 'todo']}>
+            <div class:list={['team-name', e.todo && 'todo', e.former && 'former']}>
               <span class="i18n-ja">{e.institution}</span>
               <span class="i18n-en">{e.institutionEn ?? e.institution}</span>
             </div>
-            <div class:list={['team-role', e.todo && 'todo']}>
+            <div class:list={['team-role', e.todo && 'todo', e.former && 'former']}>
               <span class="i18n-ja">{e.program}{e.note ? ` · ${e.note}` : ''}</span>
               <span class="i18n-en">
                 {e.programEn ?? e.program}{(e.noteEn ?? e.note) ? ` · ${e.noteEn ?? e.note}` : ''}
@@ -195,7 +195,7 @@ const seasonsFor = (years: string): string => {
     line-height: 1;
     margin-bottom: 2px;
   }
-  .todo { color: var(--f1-muted); font-style: italic; font-size: 12px; }
+  .todo, .former { color: var(--f1-muted); font-style: italic; font-size: 12px; }
 
   /* entry 直下のネスト箇条書き (担当領域の詳細) */
   .team-details {
