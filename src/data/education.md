@@ -3,10 +3,10 @@
 education:
   - years: 2025 – 現在
     yearsEn: 2025 – present
-    institution: JAIST (北陸先端科学技術大学院大学)
+    institution: 北陸先端科学技術大学院大学 (JAIST)
     institutionEn: JAIST (Japan Advanced Institute of Science and Technology)
-    program: 情報科学研究科 修士課程
-    programEn: Graduate School of Information Science, Master's Program
+    program: 先端科学技術研究科 修士課程
+    programEn: Graduate School of Advanced Science and Technology, Master's Program
     note: 社会的信号処理・マルチモーダルインタラクション (岡田) 研究室
     noteEn: Social Signal Processing & Multimodal Interaction (Okada) Lab
     todo: false

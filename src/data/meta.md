@@ -7,7 +7,7 @@ nameEnFirst: Hiroaki
 nameEnLast: Takahara
 role: Engineer & AI Researcher · MSc Student at JAIST
 # 検索結果に出る説明文 (meta description / JSON-LD)。実名と専門が 1 文で分かる形にする。
-seoDescription: 高原 大明 (Hiroaki Takahara) のポートフォリオ。JAIST 情報科学研究科でパーソナライズド画像美的評価を研究しながら、Web アプリからインフラまで手を動かすエンジニアです。
+seoDescription: 高原 大明 (Hiroaki Takahara) のポートフォリオ。北陸先端科学技術大学院大学 (JAIST) 先端科学技術研究科でパーソナライズド画像美的評価を研究しながら、Web アプリからインフラまで手を動かすエンジニアです。
 # 同じ人物のサイトを 2 ドメインで運用しているため、JSON-LD の sameAs で相互に紐づける。
 sites:
   - https://h-takahara.com
@@ -34,7 +34,7 @@ joined: "2025"
 club:
   name: JAIST
   nameJa: 北陸先端科学技術大学院大学
-  label: JAIST 情報科学研究科
+  label: JAIST 先端科学技術研究科
   since: "2025"
   class: MSc / Info Science
   lab: 社会的信号処理・マルチモーダルインタラクション (岡田) 研究室
