@@ -15,6 +15,8 @@ export const educationEntrySchema = z.object({
   swatch: z.string().optional(),
   swatchColor: z.string().optional(),
   todo: z.boolean().optional(),
+  // 在籍が終わった所属. 名称・説明をグレーに落として現所属と区別する (todo と違い内容は確定済み).
+  former: z.boolean().optional(),
   details: z.array(z.string()).optional(),
   detailsEn: z.array(z.string()).optional(),
 })

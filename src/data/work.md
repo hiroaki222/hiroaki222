@@ -27,6 +27,7 @@ work:
     swatch: DIO
     swatchColor: rgb(107, 104, 58)
     todo: false
+    former: true
 internships:
   - years: 2026.02 – 2026.02
     yearsEn: Feb 2026 – Feb 2026

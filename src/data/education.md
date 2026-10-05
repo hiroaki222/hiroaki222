@@ -20,5 +20,6 @@ education:
     noteEn: null
     swatch: IPUT
     swatchColor: rgb(39, 60, 189)
-    todo: true
+    todo: false
+    former: true
 ---
