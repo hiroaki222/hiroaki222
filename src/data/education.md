@@ -9,6 +9,7 @@ education:
     programEn: Graduate School of Advanced Science and Technology, Master's Program
     note: 社会的信号処理・マルチモーダルインタラクション (岡田) 研究室
     noteEn: Social Signal Processing & Multimodal Interaction (Okada) Lab
+    swatch: JAI
     todo: false
   - years: 2021 – 2025
     yearsEn: 2021 – 2025
