@@ -24,4 +24,5 @@ pnpm-debug.log*
 .idea/
 src/pages/index.astro
 src/pages/rating.astro
+src/pages/projects.astro
 .gstack/

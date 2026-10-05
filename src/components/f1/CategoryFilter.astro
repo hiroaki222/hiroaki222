@@ -1,0 +1,67 @@
+---
+// Project カードを category で絞り込むチェックボックス群.
+// 表示切替は :has() の CSS だけで行う: JS 実行前のちらつきが無く, JS 無効でも動く.
+// 対象カードは ProjectCard の data-category で拾う.
+interface Props {
+  categories: string[]
+  defaultOff?: string[]
+}
+const { categories, defaultOff = [] } = Astro.props
+
+const hideRules = categories
+  .map((c) => {
+    const value = JSON.stringify(c)
+    return `html:has(.category-filter input[value=${value}]:not(:checked)) [data-category=${value}] { display: none; }`
+  })
+  .join('\n')
+---
+
+<fieldset class="category-filter">
+  <legend>Filter</legend>
+  {categories.map((c) => (
+    <label>
+      <input type="checkbox" value={c} checked={!defaultOff.includes(c)} />
+      <span>{c}</span>
+    </label>
+  ))}
+</fieldset>
+
+<style is:inline set:html={hideRules}></style>
+
+<style>
+  .category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 20px;
+    margin: 0 0 24px;
+    padding: 0;
+    border: 0;
+  }
+  legend {
+    float: left;
+    margin-right: 4px;
+    font-family: var(--font-display);
+    font-size: 9.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--f1-muted);
+  }
+  label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--f1-text);
+  }
+  input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--f1-red);
+    cursor: pointer;
+  }
+</style>

@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro'
 
-// build ごとに出力されるページが異なる (gen:f1 は index のみ、gen:liquid は index + rating)
+// build ごとに出力されるページが異なる (gen:f1 は index + projects、gen:liquid は index + rating)
 // ため、ページ一覧はディレクトリから引く。`_` 始まりは Astro の route 対象外。
 const paths = Object.keys(import.meta.glob('./*.astro'))
   .map((file) => file.slice('./'.length, -'.astro'.length))
