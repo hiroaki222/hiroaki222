@@ -1,0 +1,18 @@
+---
+// F1 build 用 /projects entry (build:f1 / dev:f1 で src/pages/projects.astro にコピーされる).
+// このファイル自体は _ prefix のため Astro の route 対象外.
+import F1Layout from '@/layouts/F1Layout.astro'
+import { profile } from '@/lib/profile'
+import ProjectsGallery from '@/components/f1/ProjectsGallery.astro'
+import CategoryFilter from '@/components/f1/CategoryFilter.astro'
+
+const categories = [...new Set(profile.projects.map((p) => p.category))]
+---
+
+<F1Layout pageTitle="Projects">
+  <main class="page-main p-12 lg:p-16 max-[720px]:p-6">
+    <ProjectsGallery projects={profile.projects}>
+      <CategoryFilter slot="controls" categories={categories} defaultOff={['Publication']} />
+    </ProjectsGallery>
+  </main>
+</F1Layout>

@@ -7,13 +7,18 @@ interface Props {
   siteName: string
   /** サイトルート基準の OG 画像パス。絶対 URL に解決して出力する。 */
   ogImage: string
+  /** サブページ名。指定するとサイト名の前に付けてページごとに title を分ける。 */
+  pageTitle?: string
 }
 
-const { siteName, ogImage } = Astro.props
+const { siteName, ogImage, pageTitle } = Astro.props
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href
 const ogImageUrl = new URL(ogImage, Astro.site).href
-const title = `${profile.nameJa} (${profile.nameEn}) | ${profile.roleShort}`
+const siteTitle = `${profile.nameJa} (${profile.nameEn}) | ${profile.roleShort}`
+const title = pageTitle ? `${pageTitle} | ${siteTitle}` : siteTitle
+// Person はサブページでも同一人物を指すので、url はページではなくサイトのトップに固定する。
+const homeUrl = new URL('/', Astro.site).href
 
 // 検索エンジンに「別ドメインの 2 サイト + GitHub は同一人物」と伝えて実名クエリの評価を束ねる。
 const sameAs = [
@@ -28,7 +33,7 @@ const person = {
   alternateName: [profile.nameEn, profile.nameJa.replace(/\s/g, '')],
   givenName: profile.nameEnFirst,
   familyName: profile.nameEnLast,
-  url: canonical,
+  url: homeUrl,
   image: ogImageUrl,
   jobTitle: profile.role,
   affiliation: {

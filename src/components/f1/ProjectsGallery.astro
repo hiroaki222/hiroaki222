@@ -1,65 +1,26 @@
 ---
 import type { Project } from '@/lib/profile'
 import SectionHeader from '@/components/f1/SectionHeader.astro'
+import ProjectCard from '@/components/f1/ProjectCard.astro'
 interface Props {
   projects: Project[]
   id?: string
+  // 一覧ページへの導線. トップでは件数を絞って表示するため, 全件はそちらへ逃がす.
+  moreHref?: string
 }
-const { projects, id = 'projects' } = Astro.props
+const { projects, id = 'projects', moreHref } = Astro.props
 ---
 
 <section class="gallery-section" id={id}>
   <div class="gallery-inner">
     <SectionHeader title="Projects" />
+    <slot name="controls" />
     <div class="articles">
-      {projects.map((p) => (
-        <div class="article">
-          <div class="body">
-            <div class="meta">
-              <span class:list={['cat', p.todo && 'todo']}>{p.category}</span>
-              <span class:list={['time', p.todo && 'todo']}>{p.year}</span>
-            </div>
-            <h3 class:list={[p.todo && 'todo']}>{p.name}</h3>
-            <p class:list={['i18n-ja', p.todo && 'todo']}>{p.description}</p>
-            <p class:list={['i18n-en', p.todo && 'todo']}>{p.descriptionEn ?? p.description}</p>
-            {p.stack && p.stack.length > 0 && (
-              <div class="stack">
-                <span class="stack-lbl">Stack</span>
-                <span class="stack-val">
-                  {p.stack.map((s, i) => (
-                    <>
-                      {i > 0 && (
-                        <>
-                          {' '}
-                          <span class="stack-sep">/</span>
-                          {' '}
-                        </>
-                      )}
-                      <span class="stack-item">{s}</span>
-                    </>
-                  ))}
-                </span>
-              </div>
-            )}
-            <div class="actions">
-              {p.deployUrl && (
-                <a class="more launch" href={p.deployUrl} target="_blank" rel="noopener noreferrer">
-                  Launch
-                </a>
-              )}
-              {p.url ? (
-                // GitHub repo へ飛ぶものは View Repo, それ以外 (論文・詳細ページ等) は Read More
-                <a class="more" href={p.url} data-href-en={p.urlEn ?? undefined} target="_blank" rel="noopener noreferrer">
-                  {p.url.includes('github.com') ? 'View Repo' : 'Read More'}
-                </a>
-              ) : !p.deployUrl && (
-                <span class="more locked">Private Repo</span>
-              )}
-            </div>
-          </div>
-        </div>
-      ))}
+      {projects.map((p) => <ProjectCard project={p} />)}
     </div>
+    {moreHref && (
+      <a class="all" href={moreHref}>All Projects</a>
+    )}
   </div>
 </section>
 
@@ -77,111 +38,17 @@ const { projects, id = 'projects' } = Astro.props
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
   }
-  .article {
-    background: var(--f1-dark-2);
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  .meta {
-    display: flex;
+  .all {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .cat {
-    background: var(--f1-red);
-    color: white;
+    gap: 6px;
+    margin-top: 28px;
     font-family: var(--font-display);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    padding: 4px 10px;
-    font-weight: 800;
-  }
-  .time {
-    color: var(--f1-muted);
-    font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .body { padding: 16px 20px 20px; display: flex; flex-direction: column; flex: 1; }
-  .body p:last-of-type { margin-bottom: 0; }
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-top: auto;
-    padding-top: 12px;
-  }
-  h3 {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.01em;
-    line-height: 1.2;
-    margin: 0 0 8px;
-  }
-  p {
-    color: var(--f1-muted);
     font-size: 13px;
-    margin: 0 0 12px;
-    line-height: 1.55;
-  }
-  .more {
-    font-family: var(--font-display);
-    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.14em;
     color: var(--f1-red);
-    font-weight: 900;
-    display: flex;
-    align-items: center;
-    gap: 4px;
   }
-  .more::after { content: '→'; font-size: 14px; }
-  a.more:hover { text-decoration: none; opacity: 0.75; }
-  /* deployUrl 用: 動くアプリへの導線は View Repo と別色で明示 (team-accent) */
-  .more.launch { color: var(--team-accent); }
-  /* url 無し (社内/private) の明示: リンク不可であることを色で伝える */
-  .more.locked { color: var(--f1-muted); cursor: default; }
-  .more.locked::after { content: none; }
-  .todo { color: var(--f1-muted); font-style: italic; }
-
-  /* Stack: Telemetry slash — display font ラベル + mono 値 + red slash separator */
-  .stack {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    margin: 0 0 12px;
-    flex-wrap: wrap;
-  }
-  .stack-lbl {
-    font-family: var(--font-display);
-    font-size: 9.5px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--f1-muted);
-    font-weight: 800;
-    flex-shrink: 0;
-  }
-  .stack-val {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: #d8d8d8;
-    letter-spacing: 0.02em;
-    /* 各 stack-item / stack-sep の間に text-node の whitespace を挟むため, 自然に word-break される. */
-  }
-  .stack-sep {
-    color: var(--f1-red);
-  }
-  .stack-item {
-    /* 単一 tag 内は改行させない (「Cloudflare Workers」等が中で割れないように). */
-    white-space: nowrap;
-  }
+  .all::after { content: '→'; font-size: 16px; }
+  .all:hover { text-decoration: none; opacity: 0.75; }
 </style>

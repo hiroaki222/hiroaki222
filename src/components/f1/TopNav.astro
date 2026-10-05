@@ -4,12 +4,13 @@
 //  2) main nav (logo + nav items + 全幅 1枚の斜めブロック装飾レイヤー)
 //  3) race strip (ラウンド情報 + 現地時刻 / MY TIME 時計)
 // URL は安定しているため hardcode.
+// /projects からも戻れるよう, トップのアンカーは / 付きの絶対パスで持つ.
 const nav = [
-  { href: '#statistics', label: 'Statistics' },
-  { href: '#biography', label: 'Biography' },
-  { href: '#career', label: 'Career' },
-  { href: '#projects', label: 'Projects' },
-  { href: '#contact', label: 'Contact' },
+  { href: '/#statistics', label: 'Statistics' },
+  { href: '/#biography', label: 'Biography' },
+  { href: '/#career', label: 'Career' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/#contact', label: 'Contact' },
 ]
 ---
 

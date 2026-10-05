@@ -6,8 +6,8 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "gen:f1": "cp src/pages/_f1.astro src/pages/index.astro && rm -f src/pages/rating.astro",
-    "gen:liquid": "cp src/pages/_liquid.astro src/pages/index.astro && cp src/pages/_rating.astro src/pages/rating.astro",
+    "gen:f1": "cp src/pages/_f1.astro src/pages/index.astro && cp src/pages/_f1-projects.astro src/pages/projects.astro && rm -f src/pages/rating.astro",
+    "gen:liquid": "cp src/pages/_liquid.astro src/pages/index.astro && cp src/pages/_rating.astro src/pages/rating.astro && rm -f src/pages/projects.astro",
     "dev": "bun run dev:f1",
     "dev:f1": "bun run gen:f1 && astro dev --port 4321",
     "dev:liquid": "bun run gen:liquid && SITE_URL=https://hiroaki222.com astro dev --port 4322",
