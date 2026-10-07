@@ -50,7 +50,7 @@ const publications = profile.projects.filter((p) => p.category === 'Publication'
       entries={[...(profile.work ?? []), ...profile.education]}
       loans={profile.internships}
     />
-    <ProjectsGallery projects={products.slice(0, HOME_PROJECT_LIMIT)} moreHref="/projects" />
+    <ProjectsGallery projects={products.slice(0, HOME_PROJECT_LIMIT)} moreHref="/projects/" />
     <ResearchSection
       research={profile.research}
       researchEn={profile.researchEn}
