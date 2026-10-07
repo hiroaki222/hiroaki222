@@ -5,7 +5,8 @@ import type { APIRoute } from 'astro'
 const paths = Object.keys(import.meta.glob('./*.astro'))
   .map((file) => file.slice('./'.length, -'.astro'.length))
   .filter((name) => !name.startsWith('_'))
-  .map((name) => (name === 'index' ? '' : name))
+  // Cloudflare Pages serves `x/index.html` at `/x/` and 308s `/x` there, so list the final URL.
+  .map((name) => (name === 'index' ? '' : `${name}/`))
 
 export const GET: APIRoute = ({ site }) => {
   const urls = paths.map((path) => `  <url><loc>${new URL(path, site)}</loc></url>`).join('\n')
