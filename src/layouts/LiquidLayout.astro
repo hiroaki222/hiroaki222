@@ -29,7 +29,8 @@ import SeoHead from '@/components/SeoHead.astro'
       document.documentElement.dataset.lang = lang
       document.documentElement.lang = lang
     </script>
-    <SeoHead siteName="hiroaki222.com" ogImage="/favicon-liquid.png" />
+    {/* 中身は h-takahara.com と同じなので, 実名検索の評価が 2 ドメインに割れないよう canonical をメインに寄せる */}
+    <SeoHead siteName="hiroaki222.com" ogImage="/favicon-liquid.png" canonicalSite={profile.sites[0]} />
     <link rel="icon" type="image/png" href="/favicon-liquid.png" />
     <link rel="apple-touch-icon" href="/favicon-liquid.png" />
   </head>
